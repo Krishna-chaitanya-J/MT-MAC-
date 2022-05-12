@@ -1,0 +1,5 @@
+eksctl create cluster --name vault-demo --version 1.17 --region us-east-1 --nodegroup-name eks-demo30 --node-type t3.medium --nodes 3  --nodes-min 3  --nodes-max 3 --ssh-access --ssh-public-key DevOps --managed  --vpc-public-subnets subnet-ff6652b5,subnet-19d1b745
+
+
+
+sudo curl -o /etc/ssh/trusted-user-ca-keys.pem http:///v1/ssh-client-signer/public_key

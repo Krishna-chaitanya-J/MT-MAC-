@@ -1,0 +1,89 @@
+
+Total yaml files = 32 
+..................................................................
+Getting started with amazon EKS : total 4 + yamls defined 2 = 6
+............................................................................................................
+1. to create a cluster with both public and private subnets :
+https://amazon-eks.s3.us-west-2.amazonaws.com/cloudformation/2020-08-12/amazon-eksvpc-private-subnets.yaml
+2. to create a cluster with only public subnets :
+https://amazon-eks.s3.us-west-2.amazonaws.com/cloudformation/2020-08-12/amazon-eksvpc-sample.yaml
+3. to create a cluster with only private subnets :
+https://amazon-eks.s3.us-west-2.amazonaws.com/cloudformation/2020-08-12/amazon-eksfully-private-vpc.yaml
+4. to create managed nodes plugin for nodes with gpu support 
+https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.6.0/
+nvidia-device-plugin.yml
+.............................................................................................................
+Amazon EKS clusters : 3 + 4(defined) = 7
+.............................................................................................................
+1. In updating an existing cluster step 11 - update CNI version
+https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/release-1.6/config/v1.6/aws-k8s-cni.yaml
+2. Kubernetes 1.16 upgrade prerequisites
+https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2020-06-10/kube-proxy-daemonset.yaml
+3. To deploy vpc resource controller and vpc admission controller.
+kubectl apply -f https://amazon-eks.s3.us-west-2.amazonaws.com/manifests/regioncode/vpc-resource-controller/latest/vpc-resource-controller.yaml
+curl -o vpc-admission-webhook-deployment.yaml https://amazon-eks.s3.uswest-2.amazonaws.com/manifests/region-code/vpc-admission-webhook/latest/vpcadmission-webhook-deployment.yaml;
+curl -o Setup-VPCAdmissionWebhook.ps1 https://amazon-eks.s3.uswest-2.amazonaws.com/manifests/region-code/vpc-admission-webhook/latest/SetupVPCAdmissionWebhook.ps1;
+curl -o webhook-create-signed-cert.ps1 https://amazon-eks.s3.uswest-2.amazonaws.com/manifests/region-code/vpc-admission-webhook/latest/
+webhook-create-signed-cert.ps1;
+curl -o webhook-patch-ca-bundle.ps1 https://amazon-eks.s3.uswest-2.amazonaws.com/manifests/region-code/vpc-admission-webhook/latest/
+webhook-patch-ca-bundle.ps1;
+................................................................................................................
+Amazon EKS compute : 0+5(defined) = 5
+................................................................................................................
+Storage : 2+ 2(defined) = 4
+................................................................................................................
+1. Amazon EFS CSI driver
+https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/master/deploy/kubernetes/base/csidriver.yaml
+2.To deploy a Kubernetes storage class, persistent volume claim, and sample application to verify that the CSI driver is working
+https://raw.githubusercontent.com/kubernetes-sigs/aws-fsxcsi-driver/master/examples/kubernetes/dynamic_provisioning_s3/specs/storageclass.yaml
+https://raw.githubusercontent.com/kubernetes-sigs/aws-fsx-csidriver/master/examples/kubernetes/dynamic_provisioning_s3/specs/claim.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-fsx-csi-driver/master/examples/kubernetes/dynamic_provisioning_s3/specs/pod.yaml
+....................................................................................................................
+NETWORKING : 1 + 1(doc) = 2
+....................................................................................................................
+1.Deploying a CNI metrics helper 
+https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/release-1.6/config/v1.6/cni-metrics-helper.yaml
+2.Installing or upgrading coredns 
+https://amazon-eks.s3.us-west-2.amazonaws.com/cloudformation/2020-08-12/dns.yaml
+3.installing calico 
+https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/release-1.6/config/v1.6/calico.yaml
+4. Stars policy demo
+https://docs.projectcalico.org/v3.3/getting-started/kubernetes/tutorials/stars-policy/manifests/00-namespace.yaml
+https://docs.projectcalico.org/v3.3/getting-started/kubernetes/tutorials/stars-policy/manifests/01-management-ui.yaml
+https://docs.projectcalico.org/v3.3/getting-started/kubernetes/tutorials/stars-policy/manifests/02-backend.yaml
+https://docs.projectcalico.org/v3.3/getting-started/kubernetes/tutorials/stars-policy/manifests/03-frontend.yaml
+https://docs.projectcalico.org/v3.3/getting-started/kubernetes/tutorials/stars-policy/manifests/04-client.yaml
+......................................................................................................................
+APPLICATIONS : 4 + 1(doc)= 5
+..........................................................................
+1. Vertical Pod Autoscaler - metrics server 
+https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.3.6/components.yaml
+2.Horizontal pod autoscaler - application 
+https://k8s.io/examples/application/php-apache.yaml
+3.alb role
+ https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingresscontroller/v1.1.8/docs/examples/rbac-role.yaml
+4.deploying 2048 game
+https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingresscontroller/v1.1.8/docs/examples/2048/2048-namespace.yaml
+https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingresscontroller/v1.1.8/docs/examples/2048/2048-deployment.yaml
+https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingresscontroller/v1.1.8/docs/examples/2048/2048-service.yaml
+https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingresscontroller/v1.1.8/docs/examples/2048/2048-ingress.yaml
+.........................................................................................................................
+CLUSTER MANAGEMENT : 1 + 0 = 1
+................................................................................
+1.dashboard 
+https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
+..........................................................................................................................
+SECURITY : 1 + 1 (doc)- 2
+......................................................................
+1.Creating the Amazon EKS node IAM role
+https://amazon-eks.s3.us-west-2.amazonaws.com/cloudformation/2020-08-12/amazon-eksnodegroup-role.yaml
+
+
+
+
+
+
+
+
+
+

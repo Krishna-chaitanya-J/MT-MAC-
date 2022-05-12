@@ -1,0 +1,86 @@
+vault write auth/jwt/role/myproject-staging - <<EOF
+{
+  "role_type": "jwt",
+  "policies": ["gitlabpolicy],
+  "token_explicit_max_ttl": 900,
+  "user_claim": "user_email",
+  "bound_claims": {
+    "project_id": "22372964",
+    "ref": "master",
+    "ref_type": "branch"
+  }
+}
+EOF
+
+vault write auth/jwt/config \
+    jwks_url="https://gitlab.com/-/jwks" \
+    bound_issuer="gitlab.com"
+
+
+aws s3api create-bucket --bucket my-bucket --region us-east-1
+
+
+curl -H "X-Vault-Token:s.IZeqoi10Pez65z1hEqHvbiWb" http://52.90.88.15:8200/v1/aws/creds/ec2-role
+
+curl -H \"X-Vault-Token: $VAULT_TOKEN\" http://52.90.88.15:8200/v1/aws/creds/s3user
+
+
+"export AWS_DATA=$(curl -H \"X-Vault-Token: $VAULT_TOKEN\" http://52.90.88.15:8200/v1/aws/creds/s3user)"
+    - export ACCESS_KEY=$(echo $AWS_DATA | jq -r '.data.access_key')
+
+
+deploy:
+  image: python:latest
+  script:
+  - pip install awscli
+  - aws s3api create-bucket --bucket my-bucket --region us-east-1
+
+
+aws_access_key_id=AKIAIOSFODNN7EXAMPLE
+aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+
+aws configure set aws_access_key_id <yourAccessKey>
+aws configure set aws_secret_access_key <yourSecretKey>
+
+ - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=myproject-staging jwt=$CI_JOB_JWT)"
+    - echo $VAULT_TOKEN
+
+script:
+    - pip install awscli
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set region us-east-1 
+    - aws s3api create-bucket --bucket my-bucket --region us-east-1
+
+
+
+
+- "export VAULT_LOGIN_OUTPUT=$(curl --request POST --data '{\"role\": \"test\", \"jwt\": \"'$CI_JOB_JWT'\"}' http://52.90.88.15:8200/v1/auth/jwt/login)"
+    - export VAULT_TOKEN=$(echo $VAULT_LOGIN_OUTPUT | jq -r '.auth.client_token')
+    - echo $VAULT_TOKEN
+
+
+
+
+
+curl \
+--header "X-Vault-Token: s.IZeqoi10Pez65z1hEqHvbiWb" \
+--request PUT \
+--data @gitlabpolicy.json \
+http://52.90.88.15:8200/v1/sys/policy/myproject-staging
+
+
+curl \
+    --header "X-Vault-Token: s.IZeqoi10Pez65z1hEqHvbiWb" \
+    --request POST \
+    --data @jwtrole.json \
+    http://52.90.88.15:8200/v1/auth/newjwt/role/devrole
+
+curl \
+    --header "X-Vault-Token: s.IZeqoi10Pez65z1hEqHvbiWb" \
+    --request POST \
+    --data @jwtconfig.json \
+    http://52.90.88.15:8200/v1/auth/newjwt/config
+
+

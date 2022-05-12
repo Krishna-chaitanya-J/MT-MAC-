@@ -1,0 +1,48 @@
+aws s3api create-bucket --bucket test2214 --region us-east-1
+
+
+
+
+vault write database/config/my-gitlab-database \
+    plugin_name=mysql-database-plugin \
+    connection_url="{{username}}:{{password}}@tcp(18.208.245.31:3306)/" \
+    allowed_roles="mygitlabrole" \
+    username="root" \
+    password="Welcome123"
+
+
+
+vault write database/roles/mygitlabrole \
+ db_name=my-gitlab-database \
+ creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED WITH mysql_native_password BY '{{password}}';GRANT ALL PRIVILEGES ON *.* TO '{{name}}'@'%';" \
+ default_ttl="1h" \
+ max_ttl="1h"
+
+vault write database/roles/mygitlabrole \
+  db_name=my-gitlab-database \
+ creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED WITH mysql_native_password BY '{{password}}';GRANT ALL PRIVILEGES ON *.* TO '{{name}}'@'%';" \
+ default_ttl="1h" \
+max_ttl="1h"
+
+curl -H "X-Vault-Token:s.IZeqoi10Pez65z1hEqHvbiWb" http://52.90.88.15:8200/v1/database/creds/mygitlabrole
+
+GRANT ALL PRIVILEGES ON * .* TO 'user'@'localhost';
+CREATE USER 'nativeuser'@'localhost'  
+IDENTIFIED WITH mysql_native_password BY 'new_password';
+vault read database/creds/mygitlabrole
+
+
+curl \
+    --header "X-Vault-Token: s.IZeqoi10Pez65z1hEqHvbiWb " \
+    --request GET \
+ http://52.90.88.15:8200/v1/database/creds/mygitlabrole
+
+
+curl -H \"X-Vault-Token: $VAULT_TOKEN\" http://52.90.88.15:8200/v1/database/creds/mygitlabrole
+
+
+echo "SHOW databases;"| mysql -u $USER -p"$PASSWORD" -h 18.208.245.31 -p 3306
+
+
+
+vault read auth/jwt/role/myproject-staging 

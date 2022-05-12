@@ -1,0 +1,287 @@
+root@ip-10-44-0-183:~# cat override-values.yml
+server:
+  ui:
+    enabled: true
+    #serviceType: "NodePort"
+    #externalPort: 8200
+  ha:
+    enabled: true
+    replicas: 3
+    raft:
+       enabled: true
+  service:
+    type: NodePort
+    port: 8200
+    targetPort: 8200
+    protocol: TCP
+  ingress:
+    enabled: false
+    rules:
+      - http:
+        paths:
+          - path: /
+            backend:
+              serviceName: vault
+              servicePort: 8200
+              #service:
+              #type: NodePort
+              #port: 8200
+              #targetPort: 8200
+              #protocol: TCP
+    annotations:
+      kubernetes.io/ingress.class: alb
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/subnets: subnet-0fb67b0aecf8222a4,subnet-069743f33a9835f0b
+
+root@ip-10-44-0-183:~# helm install vault hashicorp/vault -f override-values.yml
+WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: /root/.kube/config
+WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: /root/.kube/config
+NAME: vault
+LAST DEPLOYED: Mon Oct 12 04:40:53 2020
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+Thank you for installing HashiCorp Vault!
+
+Now that you have deployed Vault, you should look over the docs on using
+Vault with Kubernetes available here:
+
+https://www.vaultproject.io/docs/
+
+
+Your release is named vault. To learn more about the release, try:
+
+  $ helm status vault
+  $ helm get vault
+root@ip-10-44-0-183:~# kubectl exec -ti vault-0 -- vault operator init
+Unseal Key 1: NpNQY6wy5AzUPSKiz2ygdb7YkAOnNS7i6Mo86FIaWhC/
+Unseal Key 2: UIrps2q4ab6mnh282LkusBd7Ht1CAd980Pq+EehyUlCr
+Unseal Key 3: /DFU5Rc4uyVH9C/HcLYy3HzTife45dtHJvolAqzbR3c8
+Unseal Key 4: Idut7+kJiXEMgVgTMLkVGixJ0v8lUv/C7OBrxyfZavti
+Unseal Key 5: HeB2SHWozRWD4URoUQqcJ/mvAnA8lMioprFeXkz6z+sj
+
+Initial Root Token: s.9NuiX2lkeyVB8YhfC7ct3GDS
+
+Vault initialized with 5 key shares and a key threshold of 3. Please securely
+distribute the key shares printed above. When the Vault is re-sealed,
+restarted, or stopped, you must supply at least 3 of these keys to unseal it
+before it can start servicing requests.
+
+Vault does not store the generated master key. Without at least 3 key to
+reconstruct the master key, Vault will remain permanently sealed!
+
+It is possible to generate new unseal keys, provided you have a quorum of
+existing unseal keys shares. See "vault operator rekey" for more information.
+root@ip-10-44-0-183:~# kubectl exec -ti vault-0 -- vault operator unseal
+Unseal Key (will be hidden):
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    1/3
+Unseal Nonce       adb502e1-5c85-675b-0833-08b8831e84cc
+Version            1.5.2
+HA Enabled         true
+root@ip-10-44-0-183:~# kubectl exec -ti vault-0 -- vault operator unseal
+Unseal Key (will be hidden):
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    2/3
+Unseal Nonce       adb502e1-5c85-675b-0833-08b8831e84cc
+Version            1.5.2
+HA Enabled         true
+root@ip-10-44-0-183:~# kubectl exec -ti vault-0 -- vault operator unseal
+Unseal Key (will be hidden):
+Key                     Value
+---                     -----
+Seal Type               shamir
+Initialized             true
+Sealed                  false
+Total Shares            5
+Threshold               3
+Version                 1.5.2
+Cluster Name            vault-cluster-72ffbb12
+Cluster ID              bd393a8d-a285-4ba6-a926-baf11a5d9bd2
+HA Enabled              true
+HA Cluster              n/a
+HA Mode                 standby
+Active Node Address     <none>
+Raft Committed Index    24
+Raft Applied Index      24
+root@ip-10-44-0-183:~# kubectl exec -ti vault-1 -- vault operator raft join http://vault-0.vault-internal:8200
+Key       Value
+---       -----
+Joined    true
+root@ip-10-44-0-183:~# kubectl exec -ti vault-1 -- vault operator unseal
+Unseal Key (will be hidden):
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    1/3
+Unseal Nonce       ab58f08f-3758-9889-16ac-3411efedf8e7
+Version            1.5.2
+HA Enabled         true
+root@ip-10-44-0-183:~# kubectl exec -ti vault-1 -- vault operator unseal
+Unseal Key (will be hidden):
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    2/3
+Unseal Nonce       ab58f08f-3758-9889-16ac-3411efedf8e7
+Version            1.5.2
+HA Enabled         true
+root@ip-10-44-0-183:~# kubectl exec -ti vault-1 -- vault operator unseal
+Unseal Key (will be hidden):
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    0/3
+Unseal Nonce       n/a
+Version            1.5.2
+HA Enabled         true
+root@ip-10-44-0-183:~# kubectl exec -ti vault-1 -- vault operator unseal
+Unseal Key (will be hidden):
+Error unsealing: Error making API request.
+
+URL: PUT http://127.0.0.1:8200/v1/sys/unseal
+Code: 400. Errors:
+
+* 'key' must be specified in request body as JSON, or 'reset' set to true
+command terminated with exit code 2
+root@ip-10-44-0-183:~# kubectl exec -ti vault-1 -- vault operator unseal
+Unseal Key (will be hidden):
+Key                     Value
+---                     -----
+Seal Type               shamir
+Initialized             true
+Sealed                  false
+Total Shares            5
+Threshold               3
+Version                 1.5.2
+Cluster Name            vault-cluster-72ffbb12
+Cluster ID              bd393a8d-a285-4ba6-a926-baf11a5d9bd2
+HA Enabled              true
+HA Cluster              https://vault-0.vault-internal:8201
+HA Mode                 standby
+Active Node Address     http://10.44.0.175:8200
+Raft Committed Index    33
+Raft Applied Index      33
+root@ip-10-44-0-183:~# kubectl exec -ti vault-2 -- vault operator raft join http://vault-0.vault-internal:8200
+Key       Value
+---       -----
+Joined    true
+root@ip-10-44-0-183:~# kubectl exec -ti vault-2 -- vault operator unseal
+Unseal Key (will be hidden):
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    1/3
+Unseal Nonce       0d88f67a-ec39-0a5b-21aa-4daf04073e3c
+Version            1.5.2
+HA Enabled         true
+root@ip-10-44-0-183:~# kubectl exec -ti vault-2 -- vault operator unseal
+Unseal Key (will be hidden):
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    2/3
+Unseal Nonce       0d88f67a-ec39-0a5b-21aa-4daf04073e3c
+Version            1.5.2
+HA Enabled         true
+root@ip-10-44-0-183:~# kubectl exec -ti vault-2 -- vault operator unseal
+Unseal Key (will be hidden):
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        true
+Sealed             true
+Total Shares       5
+Threshold          3
+Unseal Progress    0/3
+Unseal Nonce       n/a
+Version            1.5.2
+HA Enabled         true
+root@ip-10-44-0-183:~# kubectl exec -ti vault-2 -- vault operator unseal
+Unseal Key (will be hidden):
+Key                     Value
+---                     -----
+Seal Type               shamir
+Initialized             true
+Sealed                  false
+Total Shares            5
+Threshold               3
+Version                 1.5.2
+Cluster Name            vault-cluster-72ffbb12
+Cluster ID              bd393a8d-a285-4ba6-a926-baf11a5d9bd2
+HA Enabled              true
+HA Cluster              https://vault-0.vault-internal:8201
+HA Mode                 standby
+Active Node Address     http://10.44.0.175:8200
+Raft Committed Index    36
+Raft Applied Index      36
+root@ip-10-44-0-183:~# kubectl get svc
+NAME                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                         AGE
+kubernetes                 ClusterIP   172.20.0.1       <none>        443/TCP                         20d
+vault                      NodePort    172.20.195.254   <none>        8200:30126/TCP,8201:31427/TCP   6m27s
+vault-active               NodePort    172.20.12.236    <none>        8200:32192/TCP,8201:31915/TCP   6m27s
+vault-agent-injector-svc   ClusterIP   172.20.79.220    <none>        443/TCP                         6m27s
+vault-internal             ClusterIP   None             <none>        8200/TCP,8201/TCP               6m27s
+vault-standby              NodePort    172.20.17.203    <none>        8200:32041/TCP,8201:30895/TCP   6m27s
+root@ip-10-44-0-183:~# kubectl get ingress
+No resources found in default namespace.
+root@ip-10-44-0-183:~/ingressdeploy# vi vault-ingress.yaml
+root@ip-10-44-0-183:~/ingressdeploy# cat vault-ingress.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: "vault"
+  namespace: "default"
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/subnets: subnet-0fb67b0aecf8222a4,subnet-069743f33a9835f0b
+  labels:
+    app: vault-app
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: vault
+              servicePort: 8200
+root@ip-10-44-0-183:~/ingressdeploy# root@ip-10-44-0-183:~/ingressdeploy# kubectl apply -f vault-ingress.yaml
+ingress.extensions/vault created
+root@ip-10-44-0-183:~/ingressdeploy# kubectl get ingress
+NAME    HOSTS   ADDRESS                                                                   PORTS   AGE
+vault   *       1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com   80      7s

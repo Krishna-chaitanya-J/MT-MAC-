@@ -1,0 +1,78 @@
+####### CREATING A KV SECRET TO CHECK THE SNAPSHOT ##########
+root@ip-10-0-101-22:~# vault secrets enable -path=kvsnap kv
+Success! Enabled the kv secrets engine at: kvsnap/
+root@ip-10-0-101-22:~# vault write kvsnap/user username=lahari
+Success! Data written to: kvsnap/user
+
+
+
+######## TAKING SNAPSHOT ########################
+root@ip-10-0-101-22:~# vault operator raft snapshot save demo.snapshot
+
+
+
+######## DELETE KV SECRET AFTER TAKING SNAPSHOT ####################
+root@ip-10-0-101-22:~# vault kv delete kvsnap/user
+Success! Data deleted (if it existed) at: kvsnap/user
+root@ip-10-0-101-22:~# vault kv get kvsnap/user
+No value found at kvsnap/user
+
+
+
+######### RESTORE DATA USING SNAPSHOT #########################
+root@ip-10-0-101-22:~# vault operator raft snapshot restore demo.snapshot
+root@ip-10-0-101-22:~# vault kv get kvsnap/user
+====== Data ======
+Key         Value
+---         -----
+username    lahari
+
+
+
+
+######### CURL COMMAND FOR TAKING SNAPSHOT ###################
+curl \
+    --header "X-Vault-Token:s.IZeqoi10Pez65z1hEqHvbiWb" \
+    --request GET \
+    http://52.90.88.15:8200/v1/sys/storage/raft/snapshot > raft.snap
+
+
+
+####### CURL COMMAND FOR RESTORING SNAPSHOT ##################
+ curl \
+    --header "X-Vault-Token:s.IZeqoi10Pez65z1hEqHvbiWb" \
+    --request POST \
+    --data-binary @raft.snap \
+    http://52.90.88.15:8200/v1/sys/storage/raft/snapshot
+
+
+
+
+#########POLICY FOR BACKUP & RESTORE ############################
+
+path "sys/storage/*"
+{
+	capabilities = ["update","create","read","delete","list"]
+}
+
+************** ASSIGN THIS POLICY TO A USER TO GIVE ACCESS FOR THAT USER TO TAKE RAFT SNAPSHOT *************
+
+
+
+ 
+############## USING BACKUP POLICY & USER TOKEN TO TAKE SNAPSHOT #######################
+
+---------------------------BACKUP---------------------------------
+curl \
+    --header "X-Vault-Token:s.8wghothW3bmw5FRm0mgcawgA" \
+    --request GET \
+    http://52.90.88.15:8200/v1/sys/storage/raft/snapshot > raft.snap
+
+-------------------RESTORE-------------------------------------------
+curl \
+    --header "X-Vault-Token:s.8wghothW3bmw5FRm0mgcawgA" \
+    --request POST \
+    --data-binary @raft.snap \
+    http://52.90.88.15:8200/v1/sys/storage/raft/snapshot
+
+

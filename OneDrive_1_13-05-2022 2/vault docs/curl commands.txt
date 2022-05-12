@@ -1,0 +1,151 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ingress-nginx
+  namespace: ingress-nginx
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+    - name: https
+      port: 443
+      targetPort: https
+
+
+Unseal Key 1: NpNQY6wy5AzUPSKiz2ygdb7YkAOnNS7i6Mo86FIaWhC/
+Unseal Key 2: UIrps2q4ab6mnh282LkusBd7Ht1CAd980Pq+EehyUlCr
+Unseal Key 3: /DFU5Rc4uyVH9C/HcLYy3HzTife45dtHJvolAqzbR3c8
+Unseal Key 4: Idut7+kJiXEMgVgTMLkVGixJ0v8lUv/C7OBrxyfZavti
+Unseal Key 5: HeB2SHWozRWD4URoUQqcJ/mvAnA8lMioprFeXkz6z+sj
+
+Initial Root Token: s.9NuiX2lkeyVB8YhfC7ct3GDS
+
+
+$ vault write database/roles/readonly \
+      db_name=postgresql \
+       creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
+        GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";" \
+    default_ttl="1h" \
+    max_ttl="24h"
+
+
+curl --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" \
+    http://http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/aws/config/root
+
+
+curl --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" --request POST --data @payload.json http:// 1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/aws/config/root
+
+curl --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/aws/config/root
+
+curl \
+    --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" \
+    --request POST \
+    --data @leasepayload.json \
+    http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/aws/config/lease
+
+curl \
+    --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" \
+    http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/aws/roles/eksaccess
+
+curl \
+    --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" \
+    --request LIST \
+    http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/aws/roles
+
+
+curl --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/aws/creds/ec2role
+
+curl \
+    --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" \
+    http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/sys/policy
+
+
+
+curl \
+    --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" \
+    --request POST \
+    --data @payload.json \
+    http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/ssh/keys/my-key
+
+
+
+ curl \
+    --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" \
+    http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/totp/code/my-key
+
+
+
+aGVsbG8gZGV2b3Bz
+
+
+
+
+curl \
+    --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" \
+    --request POST \
+    --data @generateca.json \
+    http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/ssh-client-signer/config/ca
+
+
+curl \
+    --request POST \
+    --data @login.json \
+    http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/auth/userpass/login/pavan
+
+
+curl --header "X-Vault-Token: s.FV8nuTI9lciIZLZ88ndCkaU1" http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/aws/creds/s3role
+
+
+
+curl \
+    --header "X-Vault-Token: s.2KBgVYJA157XbhBxo5QaFAXN" \
+    --request LIST \
+    http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/aws/roles
+
+curl --header "X-Vault-Token: s.2KBgVYJA157XbhBxo5QaFAXN" http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/aws/creds/ec2role
+
+
+
+
+curl \
+    --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" \
+    --request LIST \
+    http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/kv-v1/user2
+
+curl \
+    --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" \
+    --request LIST \
+    http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/database/roles
+
+curl \
+    --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" \
+    http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/kv1/lahari/secrets/data/path1/secret1?version=2
+curl \
+    --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" \
+    --request POST \
+    --data @kv.json \
+    http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/kv1/lahari/secrets/data/path1/demosecret
+
+curl \
+    --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" \
+    --request POST \
+    --data @deletekv.json \
+ http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/kv1/lahari/secrets/delete/path1/demosecret
+  
+
+curl \
+    --header "X-Vault-Token: s.9NuiX2lkeyVB8YhfC7ct3GDS" \
+    http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/kv-v1/user2
+
+vault write pki/config/urls \
+    issuing_certificates="http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/pki/ca" \
+    crl_distribution_points="http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/pki/crl"
+vault write pki/config/urls issuing_certificates="http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/pki/ca" crl_distribution_points="http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/pki/crl"

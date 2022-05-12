@@ -1,0 +1,133 @@
+$ tee config.hcl <<EOF
+ui = true
+disable_mlock = true
+
+storage "inmem"{
+  
+}
+
+listener "tcp" {
+  address     = "0.0.0.0:8200"
+  tls_disable = 1
+}
+
+api_addr = "http://10.44.0.72:8200"
+cluster_addr = "https://vault-0.vault-internal:8201"
+EOF
+
+vault server -config=config.hcl
+
+.........................................................................................................
+commands history :
+
+apt-get udpate
+    2  apt-get update
+    3  apt-get install wget unzip
+    4  wget https://releases.hashicorp.com/terraform/0.13.0/terraform_0.13.0_linux_amd64.zip
+    5  unzip ./terraform_0.13.0_linux_amd64.zip -d /usr/local/bin/
+    6  terraform -v
+    7  clear
+    8  terraform -v
+    9  curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+   10  sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+   11  vault
+   12  sudo apt-get update && sudo apt-get install vault
+   13  vault
+   14  clear
+   15  vault server -dev -dev-root-token-id="education"
+   16  clear
+   17  curl localhost:8200
+   18  curl 127.0.0.1:8200
+   19  curl 127.1.111.1:8200
+   20  curl 117.1.0.1:8200
+   21  clear
+   22  ls
+   23  vault
+   24  $ tee config.hcl <<EOF
+   25  ui = true
+   26  disable_mlock = true
+   27
+   28  storage "inmem"{
+   29
+   30  }
+   31
+   32  listener "tcp" {
+   33    address     = "0.0.0.0:8200"
+   34    tls_disable = 1
+   35  }
+   36
+   37  api_addr = "http://10.44.0.72:8200"
+   38  cluster_addr = "https://vault-0.vault-internal:8201"
+   39  $ tee config.hcl <<EOF
+   40  ui = true
+   41  disable_mlock = true
+   42
+   43  storage "inmem"{
+   44
+   45  }
+   46
+   47  listener "tcp" {
+   48    address     = "0.0.0.0:8200"
+   49    tls_disable = 1
+   50  }
+   51
+   52  api_addr = "http://10.44.0.72:8200"
+   53  cluster_addr = "https://vault-0.vault-internal:8201"
+   54  clear
+   55  [2:54 PM] Sailahari Vegiraju
+   56  $ tee config.hcl <<EOF
+   57  ui = true
+   58  disable_mlock = true
+   59  storage "inmem"{
+   60
+   61  }
+   62  listener "tcp" {
+   63    address     = "0.0.0.0:8200"
+   64    tls_disable = 1
+   65  }
+   66  api_addr = "http://10.44.0.72:8200"
+   67  cluster_addr = "https://vault-0.vault-internal:8201"
+   68  EOF
+   69  vi config.hcl
+   70  vi config.hcl
+   71  clear
+   72  ls
+   73  vault server -config=config.hcl
+   74  vault server -config=config.hcl;
+   75  git clone https://github.com/hashicorp/learn-terraform-inject-secrets-aws-vault.git
+   76  clear
+   77  ls
+   78  cd learn-terraform-inject-secrets-aws-vault/
+   79  ls
+   80  cd operator-workspace/
+   81  cd ..
+   82  cd ad
+   83  cd vault-admin-workspace/
+   84  clear
+   85  ls
+   86  vi main.tf
+   87  clear
+   88  ls
+   89  export TF_VAR_aws_access_key=KIATSRJXG25QCGIMZ7O
+   90  export TF_VAR_aws_access_key=AKIATSRJXG25QCGIMZ7O
+   91  echo $TF_VAR_aws_access_key
+   92  clear
+   93  export VAULT_ADDR=http://127.0.0.1:8200
+   94  export VAULT_TOKEN=s.e0ovyPPHjJwbUz0i1ZdNbs5d
+   95  clear
+   96  ls
+   97  vi main.tf
+   98  terraform init
+   99  terraform apply 
+  100  cd ../operator-workspace
+  101  clear
+  102  ls
+  103  clear
+  104  vi main.tf
+  105  terraform init
+  106  terraform plan
+  107  terraform apply
+
+
+
+http://10.44.0.175:8200

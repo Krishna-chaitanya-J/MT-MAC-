@@ -1,0 +1,45 @@
+a node fails and comes back.. then the pvc will be created again automatically on the new node or how it behaves or what happens to the vault cluster?
+
+eksctl create cluster 
+--name eks-demo30
+--version 1.17 
+--region ap-southeast-1
+--nodegroup-name eks-demo30-wns 
+--node-type t3.medium
+--nodes 3 
+--nodes-min 3 
+--nodes-max 3 
+--ssh-access 
+--ssh-public-key lahari-eks
+--managed 
+--vpc-public-subnets subnet-0fb67b0aecf8222a4,subnet-069743f33a9835f0b
+
+server:
+  ui:
+    enabled: true
+  ha:
+    enabled: true
+    replicas: 3
+    raft:
+       enabled: true
+  service:
+    type: NodePort
+    port: 8200
+    targetPort: 8200
+    protocol: TCP
+
+
+kubectl get pods
+
+output:
+
+NAME                                   READY   STATUS    RESTARTS   AGE
+vault-0                                1/1     Running   0         			 8m12s
+vault-1                                1/1     Running   0          			8m12s
+vault-2                                0/1     Running   0          			8m12s
+vault-agent-injector-bdbf7b844-6q7rs   1/1     Running   0          8m12s
+
+
+unseal :
+
+kubectl exec -ti vault-2 -- vault operator unseal

@@ -1,0 +1,28 @@
+Key           Value
+---           -----
+public_key    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDfy8xMJejnZByzw0TDr6FSbrVIWtRdkhdB/WjEYCRm0FgD2jWmOBYwDKeTiMGXj82HbPXbC8NQ1dLb2K1d9vZjckyMd9evVS0F4UwNFdfoE2g+5xq4eUJdF4ofewTD6okJutTJ65vFKaCputqKEdpisLNGyAdTVjDXhGa8WEWn58KHMXFgRPmmYHRH9pc3ozn/hZv1Iqsk8Br631pbIZVqXOA3XnLacAoZ4V1Zt6y53OQuSWonaXC/q+SEyJsWZJZ6FoT90+DCoxXHOT22bhilNJNOem03ypP28mfqcLfUjlrxwb2jDxiLpj+WBMmL/dPRkYTufSBtB9BM+yd2usa+Dv8u9GU0A0WtjihdYQ2O0LpDqfnpZyQWhI790vXjPnQBiSMkE/lGjxJ6cbKViH/CcSZLhzM8AS/A1OYGslljUHZx2gPreiGzqf7VzMeARM8Udyv6pkc0VavlsglWYk8P4xZMoTRoUUFwNzcNJBqpaz7LvoG317WVYta/T52m48ZgpDnOCYLv86pFONgvYIy8PQQ2/doSMq/AqK1Pd2BVbj+8cnPhVIpiq257ji/sdvnU1SLSAwoGZdQFDD7TGLcfMxDAgit61Omyi4JsiTUfBVyAGaj6602IksWEaHRTAIrbSq80XxexM3RdaaINhUaKdd35E3CuVbiu1VmLyi8rgw==
+
+
+
+
+$ curl -o /etc/ssh/trusted-user-ca-keys.pem http://1c05353a-default-vault-c083-1304294467.ap-southeast-1.elb.amazonaws.com/v1/ssh/public_key
+
+
+vault write ssh/roles/my-ssh-role -<<"EOH"
+{
+  "allow_user_certificates": true,
+  "allowed_users": "*",
+  "allowed_extensions": "permit-pty,permit-port-forwarding",
+  "default_extensions": [
+    {
+      "permit-pty": ""
+    }
+  ],
+  "key_type": "ca",
+  "default_user": "ubuntu",
+  "ttl": "30m0s"
+}
+EOH
+
+vault write ssh/sign/my-ssh-role \
+    public_key=@$HOME/.ssh/id_rsa.pub

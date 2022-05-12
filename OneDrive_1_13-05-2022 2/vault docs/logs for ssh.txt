@@ -1,0 +1,2348 @@
+ubuntu@ip-10-0-101-22:~$ vault secrets enable -path=ssh-client-signer ssh
+Success! Enabled the ssh secrets engine at: ssh-client-signer/
+ubuntu@ip-10-0-101-22:~$ vault write ssh-client-signer/config/ca generate_signing_key=true
+Key           Value
+---           -----
+public_key    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCwxfjRPzP1YzVLFWvTLkdo7VG0y7FpOn/sxcZUA0DfvcD/xfMCPBS8NLQDug04/cHNqsaMfGdfKTV5/9DaS3Dyn4Zlx219V4KFeIxbsoUCr8/uoUCBcp3DCaypPgKctV0XTp1docDIDcJmJHILSdn66hSgNPQHOZ9+JOIL4TYORxjc0VfUNVNQZeFQKL2/Yxiok1ibe4LKZezQPRDdPJK8eqKV/dWBLkkJtqXlqWAJhccSOSnO2WoGOoqI34emMRIiSOO7XoZx7aLEw97kWGt4AcmPvHDrTlVVo3/KuzRh+RjIIrmok9KplptWrAUTChkPPrS3gZWO3fm/CC0mbkgTnfHpZOTwewXF12VCHitPOBrsGNdWS2tdTnDLTU4W6cjYM8Ud9NErvZVMN6vOP4+Tu/aPXmpe1hD5bDS/z3GFd7dI16XzgfIxshYleIb4wO6XKoorExo8snFgs1EGBR59l8a25IuvE+gj0kmqGXJCvocdk3bGr4jj4Vr/Ea6utzWg08xUTsRJc4absUiPizY1p2D5dj5lWLuIQi7s4oOmR5EnVZPps1e7oCcGaF2xz4rYUlPMvjh09T9VCmb6LH99n18jg26ALB+ffURGEaxTY08o8eNMTwslBZ4AaO2dpmKMh1p1mcdcVuONdWaE2n3JZqJP5dQJpjJ507ba5BAWZQ==
+ubuntu@ip-10-0-101-22:~$ $ curl -o /etc/ssh/trusted-user-ca-keys.pem http://127.0.0.1:8200/v1/ssh-client-signer/public_key
+$: command not found
+ubuntu@ip-10-0-101-22:~$ curl -o /etc/ssh/trusted-user-ca-keys.pem http://127.0.0.1:8200/v1/ssh-client-signer/public_key
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0Warning: Failed to create the file /etc/ssh/trusted-user-ca-keys.pem:
+Warning: Permission denied
+100   725  100   725    0     0   141k      0 --:--:-- --:--:-- --:--:--  177k
+curl: (23) Failed writing body (0 != 725)
+ubuntu@ip-10-0-101-22:~$ curl -o /etc/ssh/trusted-user-ca-keys.pem http://52.90.88.15:8200/v1/ssh-client-signer/public_key
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0Warning: Failed to create the file /etc/ssh/trusted-user-ca-keys.pem:
+Warning: Permission denied
+100   725  100   725    0     0   177k      0 --:--:-- --:--:-- --:--:--  177k
+curl: (23) Failed writing body (0 != 725)
+ubuntu@ip-10-0-101-22:~$ $ vault read -field=public_key ssh-client-signer/config/ca > /etc/ssh/trusted-user-ca-keys.pem
+-bash: /etc/ssh/trusted-user-ca-keys.pem: Permission denied
+ubuntu@ip-10-0-101-22:~$ vault read -field=public_key ssh-client-signer/config/ca > /etc/ssh/trusted-user-ca-keys.pem
+-bash: /etc/ssh/trusted-user-ca-keys.pem: Permission denied
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# $ vault read -field=public_key ssh-client-signer/config/ca > /etc/ssh/trusted-user-ca-keys.pem
+$: command not found
+root@ip-10-0-101-22:~# vault read -field=public_key ssh-client-signer/config/ca > /etc/ssh/trusted-user-ca-keys.pem
+root@ip-10-0-101-22:~# cd /etc/s
+security/  selinux/   sgml/      skel/      ssh/       ssl/       sudoers.d/ sysctl.d/  systemd/
+root@ip-10-0-101-22:~# cd /etc/ssh
+root@ip-10-0-101-22:/etc/ssh# ls
+moduli      ssh_host_dsa_key      ssh_host_ecdsa_key      ssh_host_ed25519_key      ssh_host_rsa_key      ssh_import_id  trusted-user-ca-keys.pem
+ssh_config  ssh_host_dsa_key.pub  ssh_host_ecdsa_key.pub  ssh_host_ed25519_key.pub  ssh_host_rsa_key.pub  sshd_config
+root@ip-10-0-101-22:/etc/ssh# cat trusted-user-ca-keys.pem
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCwxfjRPzP1YzVLFWvTLkdo7VG0y7FpOn/sxcZUA0DfvcD/xfMCPBS8NLQDug04/cHNqsaMfGdfKTV5/9DaS3Dyn4Zlx219V4KFeIxbsoUCr8/uoUCBcp3DCaypPgKctV0XTp1docDIDcJmJHILSdn66hSgNPQHOZ9+JOIL4TYORxjc0VfUNVNQZeFQKL2/Yxiok1ibe4LKZezQPRDdPJK8eqKV/dWBLkkJtqXlqWAJhccSOSnO2WoGOoqI34emMRIiSOO7XoZx7aLEw97kWGt4AcmPvHDrTlVVo3/KuzRh+RjIIrmok9KplptWrAUTChkPPrS3gZWO3fm/CC0mbkgTnfHpZOTwewXF12VCHitPOBrsGNdWS2tdTnDLTU4W6cjYM8Ud9NErvZVMN6vOP4+Tu/aPXmpe1hD5bDS/z3GFd7dI16XzgfIxshYleIb4wO6XKoorExo8snFgs1EGBR59l8a25IuvE+gj0kmqGXJCvocdk3bGr4jj4Vr/Ea6utzWg08xUTsRJc4absUiPizY1p2D5dj5lWLuIQi7s4oOmR5EnVZPps1e7oCcGaF2xz4rYUlPMvjh09T9VCmb6LH99n18jg26ALB+ffURGEaxTY08o8eNMTwslBZ4AaO2dpmKMh1p1mcdcVuONdWaE2n3JZqJP5dQJpjJ507ba5BAWZQ==
+root@ip-10-0-101-22:/etc/ssh# ls
+moduli      ssh_host_dsa_key      ssh_host_ecdsa_key      ssh_host_ed25519_key      ssh_host_rsa_key      ssh_import_id  trusted-user-ca-keys.pem
+ssh_config  ssh_host_dsa_key.pub  ssh_host_ecdsa_key.pub  ssh_host_ed25519_key.pub  ssh_host_rsa_key.pub  sshd_config
+root@ip-10-0-101-22:/etc/ssh# vi sshd_config
+root@ip-10-0-101-22:/etc/ssh# systemctl restart sshd.service
+root@ip-10-0-101-22:/etc/ssh# vault write ssh-client-signer/roles/my-role -<<"EOH"
+> {
+>   "allow_user_certificates": true,
+>   "allowed_users": "*",
+>   "allowed_extensions": "permit-pty,permit-port-forwarding",
+>   "default_extensions": [
+>     {
+>       "permit-pty": ""
+>     }
+>   ],
+>   "key_type": "ca",
+>   "default_user": "ubuntu",
+>   "ttl": "30m0s"
+> }
+> EOH
+Success! Data written to: ssh-client-signer/roles/my-role
+root@ip-10-0-101-22:/etc/ssh# ls
+moduli      ssh_host_dsa_key      ssh_host_ecdsa_key      ssh_host_ed25519_key      ssh_host_rsa_key      ssh_import_id  trusted-user-ca-keys.pem
+ssh_config  ssh_host_dsa_key.pub  ssh_host_ecdsa_key.pub  ssh_host_ed25519_key.pub  ssh_host_rsa_key.pub  sshd_config
+root@ip-10-0-101-22:/etc/ssh# cd
+root@ip-10-0-101-22:~# exit
+logout
+ubuntu@ip-10-0-101-22:~$ cd /etc/
+ubuntu@ip-10-0-101-22:/etc$ ls
+ImageMagick-6                  cron.hourly           group-               legal           nanorc                   rc0.d         subgid-
+NetworkManager                 cron.monthly          grub.d               libaudit.conf   netplan                  rc1.d         subuid
+X11                            cron.weekly           gshadow              libpaper.d      network                  rc2.d         subuid-
+acpi                           crontab               gshadow-             lighttpd        networkd-dispatcher      rc3.d         sudoers
+adduser.conf                   cryptsetup-initramfs  gss                  locale.alias    networks                 rc4.d         sudoers.d
+alternatives                   crypttab              hdparm.conf          locale.gen      newt                     rc5.d         sysctl.conf
+apache2                        dbus-1                hibagent-config.cfg  localtime       nsswitch.conf            rc6.d         sysctl.d
+apm                            debconf.conf          hibinit-config.cfg   logcheck        ntp.conf                 rcS.d         systemd
+apparmor                       debian_version        host.conf            login.defs      opt                      resolv.conf   terminfo
+apparmor.d                     default               hostname             logrotate.conf  os-release               rmt           timezone
+apport                         deluser.conf          hosts                logrotate.d     overlayroot.conf         rpc           tmpfiles.d
+apt                            depmod.d              hosts.allow          lsb-release     overlayroot.local.conf   rsyslog.conf  ucf.conf
+at.deny                        dhcp                  hosts.deny           ltrace.conf     pam.conf                 rsyslog.d     udev
+bash.bashrc                    dnsmasq.d             init.d               lvm             pam.d                    screenrc      ufw
+bash_completion                dnsmasq.d-available   initramfs-tools      machine-id      papersize                securetty     update-manager
+bash_completion.d              dpkg                  inputrc              magic           passwd                   security      update-motd.d
+bindresvport.blacklist         ec2_version           iproute2             magic.mime      passwd-                  selinux       update-notifier
+binfmt.d                       emacs                 iscsi                mailcap         perl                     services      updatedb.conf
+byobu                          environment           issue                mailcap.order   pm                       sgml          vault.d
+ca-certificates                ethertypes            issue.net            manpath.config  polkit-1                 shadow        vim
+ca-certificates.conf           fonts                 kernel               mdadm           pollinate                shadow-       vmware-tools
+ca-certificates.conf.dpkg-old  fstab                 kernel-img.conf      mime.types      popularity-contest.conf  shells        vtrgb
+calendar                       fuse.conf             landscape            mke2fs.conf     profile                  skel          wgetrc
+cloud                          gai.conf              ld.so.cache          modprobe.d      profile.d                sos.conf      xdg
+console-setup                  ghostscript           ld.so.conf           modules         protocols                ssh           xml
+cron.d                         groff                 ld.so.conf.d         modules-load.d  python3                  ssl           zsh_command_not_found
+cron.daily                     group                 ldap                 mtab            python3.6                subgid
+ubuntu@ip-10-0-101-22:/etc$ cd ssh
+ubuntu@ip-10-0-101-22:/etc/ssh$ ls
+moduli      ssh_host_dsa_key      ssh_host_ecdsa_key      ssh_host_ed25519_key      ssh_host_rsa_key      ssh_import_id  trusted-user-ca-keys.pem
+ssh_config  ssh_host_dsa_key.pub  ssh_host_ecdsa_key.pub  ssh_host_ed25519_key.pub  ssh_host_rsa_key.pub  sshd_config
+ubuntu@ip-10-0-101-22:/etc/ssh$ cat ssh_host_rsa_key.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGI9UTs4/wcM0FLM8LSSJ3fEajk9ndAs3BstP+JjqnldWjF2keFs7MhGV4f9GSFqqgi3pA16fQnD8mNyw/291TTCj3JYtFRmKePMRGxatKt/AW4jvJGBBNaMhXyb0BYlYPBoTwDaTNagL5gNUkxxBS4W70+kAvp/jlbK3DGXy9jzdGsA384lHAQFalsfhqD5ZYG3nCUt06ZrtvjDQXphWstimHVDx2ic7X9UPdNt3vqVkcofR148M25rRT5qyg1z3U8VEmLYXv2CIZZAiCpiOIbo0+Mhipbo0VA3H967x8IZf2ESaH1cvvn6jIoJW49cteBLrEmLdaa1A/6DdggoLn root@ip-10-0-101-22
+ubuntu@ip-10-0-101-22:/etc/ssh$ pwd
+/etc/ssh
+ubuntu@ip-10-0-101-22:/etc/ssh$ cd
+ubuntu@ip-10-0-101-22:~$ vault write ssh-client-signer/sign/my-role \
+>     public_key=@/etc/ssh/ssh_host_rsa_key.pub
+Key              Value
+---              -----
+serial_number    ed08d260a2dc0df6
+signed_key       ssh-rsa-cert-v01@openssh.com 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
+ubuntu@ip-10-0-101-22:~$ vault write -field=signed_key ssh-client-signer/sign/my-role \
+>     public_key=@$HOME/.ssh/id_rsa.pub > signed-cert.pub
+Failed to parse K=V data: invalid key/value pair "public_key=@/home/ubuntu/.ssh/id_rsa.pub": error reading file: open /home/ubuntu/.ssh/id_rsa.pub: no such file or directory
+ubuntu@ip-10-0-101-22:~$ vault write -field=signed_key ssh-client-signer/sign/my-role     public_key=@/etc/ssh/ssh_host_rsa_key.pub > signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ ls
+ payload.json  'plugin_name=mysql-database-plugin'   readonly.sql   recovery_key   root_token   signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ ssh -i signed-cert.pub -i ~/.ssh/ ssh_host_rsa_key ubuntu@10-0-101-22
+ssh: Could not resolve hostname ssh_host_rsa_key: Temporary failure in name resolution
+ubuntu@ip-10-0-101-22:~$ ssh -i signed-cert.pub -i ~/.ssh/ssh_host_rsa_key ubuntu@10-0-101-22
+Warning: Identity file /home/ubuntu/.ssh/ssh_host_rsa_key not accessible: No such file or directory.
+ssh: Could not resolve hostname 10-0-101-22: Temporary failure in name resolution
+ubuntu@ip-10-0-101-22:~$ ssh -i signed-cert.pub -i /etc/.ssh/ssh_host_rsa_key ubuntu@52.90.88.15
+Warning: Identity file /etc.ssh/ssh_host_rsa_key not accessible: No such file or directory.
+^C
+ubuntu@ip-10-0-101-22:~$ ssh -i signed-cert.pub -i @/etc/ssh/ssh_host_rsa_key ubuntu@152.90.88.15
+Warning: Identity file @/etc/ssh/ssh_host_rsa_key not accessible: No such file or directory.
+^C
+ubuntu@ip-10-0-101-22:~$ ls
+ payload.json  'plugin_name=mysql-database-plugin'   readonly.sql   recovery_key   root_token   signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ cd /etc/
+ubuntu@ip-10-0-101-22:/etc$ ls
+ImageMagick-6                  cron.hourly           group-               legal           nanorc                   rc0.d         subgid-
+NetworkManager                 cron.monthly          grub.d               libaudit.conf   netplan                  rc1.d         subuid
+X11                            cron.weekly           gshadow              libpaper.d      network                  rc2.d         subuid-
+acpi                           crontab               gshadow-             lighttpd        networkd-dispatcher      rc3.d         sudoers
+adduser.conf                   cryptsetup-initramfs  gss                  locale.alias    networks                 rc4.d         sudoers.d
+alternatives                   crypttab              hdparm.conf          locale.gen      newt                     rc5.d         sysctl.conf
+apache2                        dbus-1                hibagent-config.cfg  localtime       nsswitch.conf            rc6.d         sysctl.d
+apm                            debconf.conf          hibinit-config.cfg   logcheck        ntp.conf                 rcS.d         systemd
+apparmor                       debian_version        host.conf            login.defs      opt                      resolv.conf   terminfo
+apparmor.d                     default               hostname             logrotate.conf  os-release               rmt           timezone
+apport                         deluser.conf          hosts                logrotate.d     overlayroot.conf         rpc           tmpfiles.d
+apt                            depmod.d              hosts.allow          lsb-release     overlayroot.local.conf   rsyslog.conf  ucf.conf
+at.deny                        dhcp                  hosts.deny           ltrace.conf     pam.conf                 rsyslog.d     udev
+bash.bashrc                    dnsmasq.d             init.d               lvm             pam.d                    screenrc      ufw
+bash_completion                dnsmasq.d-available   initramfs-tools      machine-id      papersize                securetty     update-manager
+bash_completion.d              dpkg                  inputrc              magic           passwd                   security      update-motd.d
+bindresvport.blacklist         ec2_version           iproute2             magic.mime      passwd-                  selinux       update-notifier
+binfmt.d                       emacs                 iscsi                mailcap         perl                     services      updatedb.conf
+byobu                          environment           issue                mailcap.order   pm                       sgml          vault.d
+ca-certificates                ethertypes            issue.net            manpath.config  polkit-1                 shadow        vim
+ca-certificates.conf           fonts                 kernel               mdadm           pollinate                shadow-       vmware-tools
+ca-certificates.conf.dpkg-old  fstab                 kernel-img.conf      mime.types      popularity-contest.conf  shells        vtrgb
+calendar                       fuse.conf             landscape            mke2fs.conf     profile                  skel          wgetrc
+cloud                          gai.conf              ld.so.cache          modprobe.d      profile.d                sos.conf      xdg
+console-setup                  ghostscript           ld.so.conf           modules         protocols                ssh           xml
+cron.d                         groff                 ld.so.conf.d         modules-load.d  python3                  ssl           zsh_command_not_found
+cron.daily                     group                 ldap                 mtab            python3.6                subgid
+ubuntu@ip-10-0-101-22:/etc$ cd ssh
+ubuntu@ip-10-0-101-22:/etc/ssh$ ls
+moduli      ssh_host_dsa_key      ssh_host_ecdsa_key      ssh_host_ed25519_key      ssh_host_rsa_key      ssh_import_id  trusted-user-ca-keys.pem
+ssh_config  ssh_host_dsa_key.pub  ssh_host_ecdsa_key.pub  ssh_host_ed25519_key.pub  ssh_host_rsa_key.pub  sshd_config
+ubuntu@ip-10-0-101-22:/etc/ssh$ ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/ubuntu/.ssh/id_rsa): id_rsa.pub
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Saving key "id_rsa.pub" failed: Permission denied
+ubuntu@ip-10-0-101-22:/etc/ssh$ cd
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): id_rsa.pub
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in id_rsa.pub.
+Your public key has been saved in id_rsa.pub.pub.
+The key fingerprint is:
+SHA256:2QTaS9P6XLBmQgrAxoo3Ry/x9vv0Qe5ciB4uv4Pzdug root@ip-10-0-101-22
+The key's randomart image is:
++---[RSA 2048]----+
+| o.     .        |
+|  +.o  o o       |
+|.o ..+. = +      |
+|o o o.++ B o     |
+| . o o..S = o    |
+|        .* = .   |
+|         o*.+ .  |
+|        =++=.o   |
+|         OE++    |
++----[SHA256]-----+
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa.pub  id_rsa.pub.pub  snap
+root@ip-10-0-101-22:~# rm id_rsa.pub
+root@ip-10-0-101-22:~# rm id_rsa.pub.pub
+root@ip-10-0-101-22:~# ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): id_rsa
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in id_rsa.
+Your public key has been saved in id_rsa.pub.
+The key fingerprint is:
+SHA256:t+KCkzJfxaZXb6dzOFswq5U3juv28Strn2ZAncbOiRU root@ip-10-0-101-22
+The key's randomart image is:
++---[RSA 2048]----+
+|                 |
+|               E |
+|              o o|
+|       .     . * |
+|        S o + * .|
+|       + o o B + |
+|     oo o . *.B  |
+|  o +..o . +=X.*.|
+|   +.. .. .oBOO+o|
++----[SHA256]-----+
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  snap
+root@ip-10-0-101-22:~# vault write ssh-client-signer/sign/my-role \
+>     public_key=@./id_rsa.pub
+Key              Value
+---              -----
+serial_number    a0a0cc8a393e7a70
+signed_key       ssh-rsa-cert-v01@openssh.com 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
+root@ip-10-0-101-22:~# vault write -field=signed_key ssh-client-signer/sign/my-role \
+>     public_key=@./id_rsa.pub > signed-cert.pub
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# ssh-keygen -Lf ./signed-cert.pub
+./signed-cert.pub:
+        Type: ssh-rsa-cert-v01@openssh.com user certificate
+        Public key: RSA-CERT SHA256:t+KCkzJfxaZXb6dzOFswq5U3juv28Strn2ZAncbOiRU
+        Signing CA: RSA SHA256:IqzEWNKzT5iGqbyEk610iJRx8zGq7zA+GkpTBWlZ324
+        Key ID: "vault-root-b7e28293325fc5a6576fa773385b30ab95378eebf6f12b6b9f66409dc6ce8915"
+        Serial: 16045636589707857391
+        Valid: from 2020-10-13T10:39:27 to 2020-10-13T11:09:57
+        Principals:
+                ubuntu
+        Critical Options: (none)
+        Extensions:
+                permit-pty
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i ./id_rsa ubuntu@10-0-101-22
+ssh: Could not resolve hostname 10-0-101-22: Temporary failure in name resolution
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i ./id_rsa ubuntu@10.0.101.22
+The authenticity of host '10.0.101.22 (10.0.101.22)' can't be established.
+ECDSA key fingerprint is SHA256:xH0/t2xPpCnxHnuQciOGproWeWcC0Zo0/UB4P+7NIFU.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.0.101.22' (ECDSA) to the list of known hosts.
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 10:42:07 UTC 2020
+
+  System load:  0.01              Processes:           102
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 31%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 10:14:58 2020 from 49.37.176.109
+ubuntu@ip-10-0-101-22:~$ ls
+ payload.json  'plugin_name=mysql-database-plugin'   readonly.sql   recovery_key   root_token   signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# cat id_rsa
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEApIPaBZGwcskbAHSqhoOjiwLiUAMOmAeYp+P9K3njDZTI3dkx
+Jhq63hU1nWJI8Z3TiKc6wiF3E3Pa0iYSoN2s/dQgFpvkUHwXSsK+86AXF/KPLa/a
+y0K75Y0m/OSZSxGjVSLghMYh6ekhuOQsaSJA56z3/gwwrz1MYw0fpNjeBv85PW8g
+knhZ5iwRfmzaAtXMERxaHxe2CZ1HYTroC1dGzxnRpY72LLdP5gjXnpP9rzEzZqxn
+0Gh0Kwn67XF+Zup1+AugbnzzGBpgicA7MdeIlzgWfb84XdQOGcaMlagzAdac2Jy/
+Biuj1kSeJAGUcM1YKurXIJE4XpauO/sySGg81wIDAQABAoIBAHU5Zl7Vgu8nkU/v
+0ZprrlrdQTlWFE4MC6CF+d3CyiDhRYeevUCzhze70SpF4EgZ96LF1j6B7gE0alWX
+v2pUynFLd1nk1vjqkwY4YivihNIRiig5yCNRd+WHgKJumTQ+ay283lJ9g6jS7655
+F5QKTklGnKavNPmJKibiMQwbY4mDqfAZi26zE/M1ZHjEJdF1m72FLt4zHTGtLl9A
+qDK0v7dCq3nyKQzfCywNiKFDzLSdJz7MQOWev/ssCYSB6nMpHNuph52R30dTn6aQ
+6Qsv1740eAVEIRCGs7WX4woWjhEdAjOxXDJUgGY+BhCSqy5EXyjPMOUNuaGr25Dr
+uUwgtmECgYEA2QWrZUVrxGzDJHADWZ3bsyahT8rxBK/hcrh/0arXRaSIL2D7gbCc
+iTmGPHfQ7tGfli7pTvBjch8eB9HkPGGzbYU/XhIfNeqs1DwnEZGGd2qHMzSlBD60
+bRb4fALeizIrQFyFT47AAehL6W2a6QVkFSCGlxihOgPTxe+TiE74zh8CgYEAwg/9
+Yh4vmXxMCZV8bBzyN/LzZtjONIJi7D2NKXU6Vijg2F9GhpHg84s1XEdxh4ikVKAA
+Dx4k1r/5Nl6DMAiM6hh8GAtgnizrK0JVymF/qMZDdElrZAUeOWjtLWMYo8oJ9oap
+zmrAzCMcrWVtafKwM9lQhDRIomFagwIVWwMPykkCgYAGqnrqQGif/us7iklADm46
+IXyg883VZAWbvXkHmqTEGdqpAeSXxjH4sRCjeNatDzlEpqo5535Wegg1G0hUZnfZ
+bFdW712QDWZDmplkm8CymE4Qz5Ql/jsSgrsdLAVj5yWW84CQwgS5ykXSpLA2ahj5
+4SbhKzuAia+Oi95POIXB5wKBgQC4KRZrM3w2asd53Nt7eai/QZaMxjhBim64A91f
+N3lJ5Hcjvp6d+/f/Bt93l/D8Dsbr6/7CWffZt8qXNu/F+IdJbDzvUHS7BqORpNzn
+Nsk/8A55X2dDPrwk/Rb/GGh8nrH/umGQmqwlzThcsME5Zu6h9Zu8KiW3uy1639JG
+UUx9yQKBgQCuQNZURWLGbdSWjQt+ev0yvR1ToiYLT7uGeGX6Rj82VgL4JRhxvkOK
+zHCdfvkQe0dv4TxibfdKnHqvml+txDjzOpuKyXz5GBw+fNzZGexisICtrcb4WjAl
+l6zZFGLny3B/DsWYge2s/SQWjHcpEbTq8jaVNsgyumwOClH/7dQSHg==
+-----END RSA PRIVATE KEY-----
+root@ip-10-0-101-22:~# Connection reset by 52.90.88.15 port 22
+
+C:\Users\M1055938\Downloads>ssh -i vault-eks.pem ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 10:52:21 UTC 2020
+
+  System load:  0.0               Processes:           109
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 31%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 10:42:08 2020 from 10.0.101.22
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# cat signed-cert.pub
+ssh-rsa-cert-v01@openssh.com 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
+root@ip-10-0-101-22:~# exit
+logout
+ubuntu@ip-10-0-101-22:~$ ls
+ payload.json  'plugin_name=mysql-database-plugin'   readonly.sql   recovery_key   root_token   signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ exit
+logout
+Connection to 52.90.88.15 closed.
+
+C:\Users\M1055938\Downloads>ssh -i vault-eks.pem ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 10:59:14 UTC 2020
+
+  System load:  0.0               Processes:           112
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 32%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 10:52:22 2020 from 157.48.216.45
+ubuntu@ip-10-0-101-22:~$ ssh -i signed-cert.pub -i ./id_rsa ubuntu@10-0-101-22
+Warning: Identity file ./id_rsa not accessible: No such file or directory.
+ssh: Could not resolve hostname 10-0-101-22: Temporary failure in name resolution
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i ./id_rsa ubuntu@10-0-101-22
+ssh: Could not resolve hostname 10-0-101-22: Temporary failure in name resolution
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i ./id_rsa ubuntu@10.0.101.22
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 11:00:02 UTC 2020
+
+  System load:  0.08              Processes:           119
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 33%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 10:59:16 2020 from 157.48.216.45
+ubuntu@ip-10-0-101-22:~$ Connection reset by 52.90.88.15 port 22
+
+C:\Users\M1055938\Downloads>ssh -i vault-eks.pem ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 11:19:55 UTC 2020
+
+  System load:  0.0               Processes:           120
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 33%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 11:00:06 2020 from 10.0.101.22
+ubuntu@ip-10-0-101-22:~$ ls
+ payload.json  'plugin_name=mysql-database-plugin'   readonly.sql   recovery_key   root_token   signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ cat signed-cert.pub
+ssh-rsa-cert-v01@openssh.com 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
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# cat signed-cert.pub
+ssh-rsa-cert-v01@openssh.com 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
+root@ip-10-0-101-22:~# cat id_rsa
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEApIPaBZGwcskbAHSqhoOjiwLiUAMOmAeYp+P9K3njDZTI3dkx
+Jhq63hU1nWJI8Z3TiKc6wiF3E3Pa0iYSoN2s/dQgFpvkUHwXSsK+86AXF/KPLa/a
+y0K75Y0m/OSZSxGjVSLghMYh6ekhuOQsaSJA56z3/gwwrz1MYw0fpNjeBv85PW8g
+knhZ5iwRfmzaAtXMERxaHxe2CZ1HYTroC1dGzxnRpY72LLdP5gjXnpP9rzEzZqxn
+0Gh0Kwn67XF+Zup1+AugbnzzGBpgicA7MdeIlzgWfb84XdQOGcaMlagzAdac2Jy/
+Biuj1kSeJAGUcM1YKurXIJE4XpauO/sySGg81wIDAQABAoIBAHU5Zl7Vgu8nkU/v
+0ZprrlrdQTlWFE4MC6CF+d3CyiDhRYeevUCzhze70SpF4EgZ96LF1j6B7gE0alWX
+v2pUynFLd1nk1vjqkwY4YivihNIRiig5yCNRd+WHgKJumTQ+ay283lJ9g6jS7655
+F5QKTklGnKavNPmJKibiMQwbY4mDqfAZi26zE/M1ZHjEJdF1m72FLt4zHTGtLl9A
+qDK0v7dCq3nyKQzfCywNiKFDzLSdJz7MQOWev/ssCYSB6nMpHNuph52R30dTn6aQ
+6Qsv1740eAVEIRCGs7WX4woWjhEdAjOxXDJUgGY+BhCSqy5EXyjPMOUNuaGr25Dr
+uUwgtmECgYEA2QWrZUVrxGzDJHADWZ3bsyahT8rxBK/hcrh/0arXRaSIL2D7gbCc
+iTmGPHfQ7tGfli7pTvBjch8eB9HkPGGzbYU/XhIfNeqs1DwnEZGGd2qHMzSlBD60
+bRb4fALeizIrQFyFT47AAehL6W2a6QVkFSCGlxihOgPTxe+TiE74zh8CgYEAwg/9
+Yh4vmXxMCZV8bBzyN/LzZtjONIJi7D2NKXU6Vijg2F9GhpHg84s1XEdxh4ikVKAA
+Dx4k1r/5Nl6DMAiM6hh8GAtgnizrK0JVymF/qMZDdElrZAUeOWjtLWMYo8oJ9oap
+zmrAzCMcrWVtafKwM9lQhDRIomFagwIVWwMPykkCgYAGqnrqQGif/us7iklADm46
+IXyg883VZAWbvXkHmqTEGdqpAeSXxjH4sRCjeNatDzlEpqo5535Wegg1G0hUZnfZ
+bFdW712QDWZDmplkm8CymE4Qz5Ql/jsSgrsdLAVj5yWW84CQwgS5ykXSpLA2ahj5
+4SbhKzuAia+Oi95POIXB5wKBgQC4KRZrM3w2asd53Nt7eai/QZaMxjhBim64A91f
+N3lJ5Hcjvp6d+/f/Bt93l/D8Dsbr6/7CWffZt8qXNu/F+IdJbDzvUHS7BqORpNzn
+Nsk/8A55X2dDPrwk/Rb/GGh8nrH/umGQmqwlzThcsME5Zu6h9Zu8KiW3uy1639JG
+UUx9yQKBgQCuQNZURWLGbdSWjQt+ev0yvR1ToiYLT7uGeGX6Rj82VgL4JRhxvkOK
+zHCdfvkQe0dv4TxibfdKnHqvml+txDjzOpuKyXz5GBw+fNzZGexisICtrcb4WjAl
+l6zZFGLny3B/DsWYge2s/SQWjHcpEbTq8jaVNsgyumwOClH/7dQSHg==
+-----END RSA PRIVATE KEY-----
+root@ip-10-0-101-22:~#
+root@ip-10-0-101-22:~#  vault write ssh-client-signer/sign/my-role \
+>      public_key=@./id_rsa.pub
+Key              Value
+---              -----
+serial_number    7e170f5c242c4663
+signed_key       ssh-rsa-cert-v01@openssh.com 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
+root@ip-10-0-101-22:~# Connection reset by 52.90.88.15 port 22
+
+C:\Users\M1055938\Downloads>ssh -i vault-eks.pem ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 11:34:48 UTC 2020
+
+  System load:  0.0               Processes:           124
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 34%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 11:19:56 2020 from 157.48.216.45
+ubuntu@ip-10-0-101-22:~$ ls
+ payload.json  'plugin_name=mysql-database-plugin'   readonly.sql   recovery_key   root_token   signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ rm signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# chmod 0600 /etc/ssh/trusted-user-ca-keys.pem
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# chmod 0600 signed-cert.pub
+root@ip-10-0-101-22:~# ssh-keygen -Lf signed-cert.pub
+signed-cert.pub:
+        Type: ssh-rsa-cert-v01@openssh.com user certificate
+        Public key: RSA-CERT SHA256:t+KCkzJfxaZXb6dzOFswq5U3juv28Strn2ZAncbOiRU
+        Signing CA: RSA SHA256:IqzEWNKzT5iGqbyEk610iJRx8zGq7zA+GkpTBWlZ324
+        Key ID: "vault-root-b7e28293325fc5a6576fa773385b30ab95378eebf6f12b6b9f66409dc6ce8915"
+        Serial: 16045636589707857391
+        Valid: from 2020-10-13T10:39:27 to 2020-10-13T11:09:57
+        Principals:
+                ubuntu
+        Critical Options: (none)
+        Extensions:
+                permit-pty
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# rm signed-cert.pub
+root@ip-10-0-101-22:~# vault write -field=signed_key ssh-client-signer/sign/my-role \
+>     public_key=@./id_rsa.pub > signed-cert.pub
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa ubuntu@52.90.88.15
+The authenticity of host '52.90.88.15 (52.90.88.15)' can't be established.
+ECDSA key fingerprint is SHA256:xH0/t2xPpCnxHnuQciOGproWeWcC0Zo0/UB4P+7NIFU.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '52.90.88.15' (ECDSA) to the list of known hosts.
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 11:41:00 UTC 2020
+
+  System load:  0.0               Processes:           131
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 34%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 11:34:49 2020 from 157.48.216.45
+ubuntu@ip-10-0-101-22:~$ ls
+ pavan   pavan.pub   payload.json  'plugin_name=mysql-database-plugin'   readonly.sql   recovery_key   root_token
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# cat signed-cert.pub
+ssh-rsa-cert-v01@openssh.com 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
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# cat id_rsa
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEApIPaBZGwcskbAHSqhoOjiwLiUAMOmAeYp+P9K3njDZTI3dkx
+Jhq63hU1nWJI8Z3TiKc6wiF3E3Pa0iYSoN2s/dQgFpvkUHwXSsK+86AXF/KPLa/a
+y0K75Y0m/OSZSxGjVSLghMYh6ekhuOQsaSJA56z3/gwwrz1MYw0fpNjeBv85PW8g
+knhZ5iwRfmzaAtXMERxaHxe2CZ1HYTroC1dGzxnRpY72LLdP5gjXnpP9rzEzZqxn
+0Gh0Kwn67XF+Zup1+AugbnzzGBpgicA7MdeIlzgWfb84XdQOGcaMlagzAdac2Jy/
+Biuj1kSeJAGUcM1YKurXIJE4XpauO/sySGg81wIDAQABAoIBAHU5Zl7Vgu8nkU/v
+0ZprrlrdQTlWFE4MC6CF+d3CyiDhRYeevUCzhze70SpF4EgZ96LF1j6B7gE0alWX
+v2pUynFLd1nk1vjqkwY4YivihNIRiig5yCNRd+WHgKJumTQ+ay283lJ9g6jS7655
+F5QKTklGnKavNPmJKibiMQwbY4mDqfAZi26zE/M1ZHjEJdF1m72FLt4zHTGtLl9A
+qDK0v7dCq3nyKQzfCywNiKFDzLSdJz7MQOWev/ssCYSB6nMpHNuph52R30dTn6aQ
+6Qsv1740eAVEIRCGs7WX4woWjhEdAjOxXDJUgGY+BhCSqy5EXyjPMOUNuaGr25Dr
+uUwgtmECgYEA2QWrZUVrxGzDJHADWZ3bsyahT8rxBK/hcrh/0arXRaSIL2D7gbCc
+iTmGPHfQ7tGfli7pTvBjch8eB9HkPGGzbYU/XhIfNeqs1DwnEZGGd2qHMzSlBD60
+bRb4fALeizIrQFyFT47AAehL6W2a6QVkFSCGlxihOgPTxe+TiE74zh8CgYEAwg/9
+Yh4vmXxMCZV8bBzyN/LzZtjONIJi7D2NKXU6Vijg2F9GhpHg84s1XEdxh4ikVKAA
+Dx4k1r/5Nl6DMAiM6hh8GAtgnizrK0JVymF/qMZDdElrZAUeOWjtLWMYo8oJ9oap
+zmrAzCMcrWVtafKwM9lQhDRIomFagwIVWwMPykkCgYAGqnrqQGif/us7iklADm46
+IXyg883VZAWbvXkHmqTEGdqpAeSXxjH4sRCjeNatDzlEpqo5535Wegg1G0hUZnfZ
+bFdW712QDWZDmplkm8CymE4Qz5Ql/jsSgrsdLAVj5yWW84CQwgS5ykXSpLA2ahj5
+4SbhKzuAia+Oi95POIXB5wKBgQC4KRZrM3w2asd53Nt7eai/QZaMxjhBim64A91f
+N3lJ5Hcjvp6d+/f/Bt93l/D8Dsbr6/7CWffZt8qXNu/F+IdJbDzvUHS7BqORpNzn
+Nsk/8A55X2dDPrwk/Rb/GGh8nrH/umGQmqwlzThcsME5Zu6h9Zu8KiW3uy1639JG
+UUx9yQKBgQCuQNZURWLGbdSWjQt+ev0yvR1ToiYLT7uGeGX6Rj82VgL4JRhxvkOK
+zHCdfvkQe0dv4TxibfdKnHqvml+txDjzOpuKyXz5GBw+fNzZGexisICtrcb4WjAl
+l6zZFGLny3B/DsWYge2s/SQWjHcpEbTq8jaVNsgyumwOClH/7dQSHg==
+-----END RSA PRIVATE KEY-----
+root@ip-10-0-101-22:~# Connection reset by 52.90.88.15 port 22
+
+C:\Users\M1055938\Downloads>ssh -i vault-eks.pem ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 13:17:05 UTC 2020
+
+  System load:  0.06              Processes:           117
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 33%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 12:25:06 2020 from 49.37.176.109
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa ubuntu@52.90.88.15
+ubuntu@52.90.88.15: Permission denied (publickey).
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa ubuntu@52.90.88.15
+ubuntu@52.90.88.15: Permission denied (publickey).
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa ubuntu@10.0.101.22
+ubuntu@10.0.101.22: Permission denied (publickey).
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa ubuntu@10.0.101.22
+ubuntu@10.0.101.22: Permission denied (publickey).
+root@ip-10-0-101-22:~# vault write -field=signed_key ssh-client-signer/sign/my-role \
+>  public_key=@./id_rsa.pub > signed-cert.pub
+Error writing data to ssh-client-signer/sign/my-role: Error making API request.
+
+URL: PUT http://127.0.0.1:8200/v1/ssh-client-signer/sign/my-role
+Code: 404. Errors:
+
+* no handler for route 'ssh-client-signer/sign/my-role'
+root@ip-10-0-101-22:~# vault login
+Token (will be hidden):
+Success! You are now authenticated. The token information displayed below
+is already stored in the token helper. You do NOT need to run "vault login"
+again. Future Vault requests will automatically use this token.
+
+Key                  Value
+---                  -----
+token                s.IZeqoi10Pez65z1hEqHvbiWb
+token_accessor       rUPfLpA7unw1FQqF1AMNouzH
+token_duration       ∞
+token_renewable      false
+token_policies       ["root"]
+identity_policies    []
+policies             ["root"]
+root@ip-10-0-101-22:~# vault write -field=signed_key ssh-client-signer/sign/my-role \
+> public_key=@./id_rsa.pub > signed-cert.pub
+Error writing data to ssh-client-signer/sign/my-role: Error making API request.
+
+URL: PUT http://127.0.0.1:8200/v1/ssh-client-signer/sign/my-role
+Code: 404. Errors:
+
+* no handler for route 'ssh-client-signer/sign/my-role'
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# vault write -field=signed_key ssh-client-signer/sign/my-role public_key=@./id_rsa.pub > signed-cert.pub
+Error writing data to ssh-client-signer/sign/my-role: Error making API request.
+
+URL: PUT http://127.0.0.1:8200/v1/ssh-client-signer/sign/my-role
+Code: 404. Errors:
+
+* no handler for route 'ssh-client-signer/sign/my-role'
+root@ip-10-0-101-22:~# exit
+logout
+ubuntu@ip-10-0-101-22:~$ exit
+logout
+Connection to 52.90.88.15 closed.
+
+C:\Users\M1055938\Downloads>ssh -i vault-eks.pem ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 13:30:00 UTC 2020
+
+  System load:  0.01              Processes:           119
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 33%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 13:17:06 2020 from 157.48.216.45
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# vault login
+Token (will be hidden):
+Success! You are now authenticated. The token information displayed below
+is already stored in the token helper. You do NOT need to run "vault login"
+again. Future Vault requests will automatically use this token.
+
+Key                  Value
+---                  -----
+token                s.IZeqoi10Pez65z1hEqHvbiWb
+token_accessor       rUPfLpA7unw1FQqF1AMNouzH
+token_duration       ∞
+token_renewable      false
+token_policies       ["root"]
+identity_policies    []
+policies             ["root"]
+root@ip-10-0-101-22:~#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ubuntu@ip-10-0-101-22:~$ vault secrets enable -path=ssh-client-signer ssh
+Success! Enabled the ssh secrets engine at: ssh-client-signer/
+ubuntu@ip-10-0-101-22:~$ vault write ssh-client-signer/config/ca generate_signing_key=true
+Key           Value
+---           -----
+public_key    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCwxfjRPzP1YzVLFWvTLkdo7VG0y7FpOn/sxcZUA0DfvcD/xfMCPBS8NLQDug04/cHNqsaMfGdfKTV5/9DaS3Dyn4Zlx219V4KFeIxbsoUCr8/uoUCBcp3DCaypPgKctV0XTp1docDIDcJmJHILSdn66hSgNPQHOZ9+JOIL4TYORxjc0VfUNVNQZeFQKL2/Yxiok1ibe4LKZezQPRDdPJK8eqKV/dWBLkkJtqXlqWAJhccSOSnO2WoGOoqI34emMRIiSOO7XoZx7aLEw97kWGt4AcmPvHDrTlVVo3/KuzRh+RjIIrmok9KplptWrAUTChkPPrS3gZWO3fm/CC0mbkgTnfHpZOTwewXF12VCHitPOBrsGNdWS2tdTnDLTU4W6cjYM8Ud9NErvZVMN6vOP4+Tu/aPXmpe1hD5bDS/z3GFd7dI16XzgfIxshYleIb4wO6XKoorExo8snFgs1EGBR59l8a25IuvE+gj0kmqGXJCvocdk3bGr4jj4Vr/Ea6utzWg08xUTsRJc4absUiPizY1p2D5dj5lWLuIQi7s4oOmR5EnVZPps1e7oCcGaF2xz4rYUlPMvjh09T9VCmb6LH99n18jg26ALB+ffURGEaxTY08o8eNMTwslBZ4AaO2dpmKMh1p1mcdcVuONdWaE2n3JZqJP5dQJpjJ507ba5BAWZQ==
+ubuntu@ip-10-0-101-22:~$ $ curl -o /etc/ssh/trusted-user-ca-keys.pem http://127.0.0.1:8200/v1/ssh-client-signer/public_key
+$: command not found
+ubuntu@ip-10-0-101-22:~$ curl -o /etc/ssh/trusted-user-ca-keys.pem http://127.0.0.1:8200/v1/ssh-client-signer/public_key
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0Warning: Failed to create the file /etc/ssh/trusted-user-ca-keys.pem:
+Warning: Permission denied
+100   725  100   725    0     0   141k      0 --:--:-- --:--:-- --:--:--  177k
+curl: (23) Failed writing body (0 != 725)
+ubuntu@ip-10-0-101-22:~$ curl -o /etc/ssh/trusted-user-ca-keys.pem http://52.90.88.15:8200/v1/ssh-client-signer/public_key
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0Warning: Failed to create the file /etc/ssh/trusted-user-ca-keys.pem:
+Warning: Permission denied
+100   725  100   725    0     0   177k      0 --:--:-- --:--:-- --:--:--  177k
+curl: (23) Failed writing body (0 != 725)
+ubuntu@ip-10-0-101-22:~$ $ vault read -field=public_key ssh-client-signer/config/ca > /etc/ssh/trusted-user-ca-keys.pem
+-bash: /etc/ssh/trusted-user-ca-keys.pem: Permission denied
+ubuntu@ip-10-0-101-22:~$ vault read -field=public_key ssh-client-signer/config/ca > /etc/ssh/trusted-user-ca-keys.pem
+-bash: /etc/ssh/trusted-user-ca-keys.pem: Permission denied
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# $ vault read -field=public_key ssh-client-signer/config/ca > /etc/ssh/trusted-user-ca-keys.pem
+$: command not found
+root@ip-10-0-101-22:~# vault read -field=public_key ssh-client-signer/config/ca > /etc/ssh/trusted-user-ca-keys.pem
+root@ip-10-0-101-22:~# cd /etc/s
+security/  selinux/   sgml/      skel/      ssh/       ssl/       sudoers.d/ sysctl.d/  systemd/
+root@ip-10-0-101-22:~# cd /etc/ssh
+root@ip-10-0-101-22:/etc/ssh# ls
+moduli      ssh_host_dsa_key      ssh_host_ecdsa_key      ssh_host_ed25519_key      ssh_host_rsa_key      ssh_import_id  trusted-user-ca-keys.pem
+ssh_config  ssh_host_dsa_key.pub  ssh_host_ecdsa_key.pub  ssh_host_ed25519_key.pub  ssh_host_rsa_key.pub  sshd_config
+root@ip-10-0-101-22:/etc/ssh# cat trusted-user-ca-keys.pem
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCwxfjRPzP1YzVLFWvTLkdo7VG0y7FpOn/sxcZUA0DfvcD/xfMCPBS8NLQDug04/cHNqsaMfGdfKTV5/9DaS3Dyn4Zlx219V4KFeIxbsoUCr8/uoUCBcp3DCaypPgKctV0XTp1docDIDcJmJHILSdn66hSgNPQHOZ9+JOIL4TYORxjc0VfUNVNQZeFQKL2/Yxiok1ibe4LKZezQPRDdPJK8eqKV/dWBLkkJtqXlqWAJhccSOSnO2WoGOoqI34emMRIiSOO7XoZx7aLEw97kWGt4AcmPvHDrTlVVo3/KuzRh+RjIIrmok9KplptWrAUTChkPPrS3gZWO3fm/CC0mbkgTnfHpZOTwewXF12VCHitPOBrsGNdWS2tdTnDLTU4W6cjYM8Ud9NErvZVMN6vOP4+Tu/aPXmpe1hD5bDS/z3GFd7dI16XzgfIxshYleIb4wO6XKoorExo8snFgs1EGBR59l8a25IuvE+gj0kmqGXJCvocdk3bGr4jj4Vr/Ea6utzWg08xUTsRJc4absUiPizY1p2D5dj5lWLuIQi7s4oOmR5EnVZPps1e7oCcGaF2xz4rYUlPMvjh09T9VCmb6LH99n18jg26ALB+ffURGEaxTY08o8eNMTwslBZ4AaO2dpmKMh1p1mcdcVuONdWaE2n3JZqJP5dQJpjJ507ba5BAWZQ==
+root@ip-10-0-101-22:/etc/ssh# ls
+moduli      ssh_host_dsa_key      ssh_host_ecdsa_key      ssh_host_ed25519_key      ssh_host_rsa_key      ssh_import_id  trusted-user-ca-keys.pem
+ssh_config  ssh_host_dsa_key.pub  ssh_host_ecdsa_key.pub  ssh_host_ed25519_key.pub  ssh_host_rsa_key.pub  sshd_config
+root@ip-10-0-101-22:/etc/ssh# vi sshd_config
+root@ip-10-0-101-22:/etc/ssh# systemctl restart sshd.service
+root@ip-10-0-101-22:/etc/ssh# vault write ssh-client-signer/roles/my-role -<<"EOH"
+> {
+>   "allow_user_certificates": true,
+>   "allowed_users": "*",
+>   "allowed_extensions": "permit-pty,permit-port-forwarding",
+>   "default_extensions": [
+>     {
+>       "permit-pty": ""
+>     }
+>   ],
+>   "key_type": "ca",
+>   "default_user": "ubuntu",
+>   "ttl": "30m0s"
+> }
+> EOH
+Success! Data written to: ssh-client-signer/roles/my-role
+root@ip-10-0-101-22:/etc/ssh# ls
+moduli      ssh_host_dsa_key      ssh_host_ecdsa_key      ssh_host_ed25519_key      ssh_host_rsa_key      ssh_import_id  trusted-user-ca-keys.pem
+ssh_config  ssh_host_dsa_key.pub  ssh_host_ecdsa_key.pub  ssh_host_ed25519_key.pub  ssh_host_rsa_key.pub  sshd_config
+root@ip-10-0-101-22:/etc/ssh# cd
+root@ip-10-0-101-22:~# exit
+logout
+ubuntu@ip-10-0-101-22:~$ cd /etc/
+ubuntu@ip-10-0-101-22:/etc$ ls
+ImageMagick-6                  cron.hourly           group-               legal           nanorc                   rc0.d         subgid-
+NetworkManager                 cron.monthly          grub.d               libaudit.conf   netplan                  rc1.d         subuid
+X11                            cron.weekly           gshadow              libpaper.d      network                  rc2.d         subuid-
+acpi                           crontab               gshadow-             lighttpd        networkd-dispatcher      rc3.d         sudoers
+adduser.conf                   cryptsetup-initramfs  gss                  locale.alias    networks                 rc4.d         sudoers.d
+alternatives                   crypttab              hdparm.conf          locale.gen      newt                     rc5.d         sysctl.conf
+apache2                        dbus-1                hibagent-config.cfg  localtime       nsswitch.conf            rc6.d         sysctl.d
+apm                            debconf.conf          hibinit-config.cfg   logcheck        ntp.conf                 rcS.d         systemd
+apparmor                       debian_version        host.conf            login.defs      opt                      resolv.conf   terminfo
+apparmor.d                     default               hostname             logrotate.conf  os-release               rmt           timezone
+apport                         deluser.conf          hosts                logrotate.d     overlayroot.conf         rpc           tmpfiles.d
+apt                            depmod.d              hosts.allow          lsb-release     overlayroot.local.conf   rsyslog.conf  ucf.conf
+at.deny                        dhcp                  hosts.deny           ltrace.conf     pam.conf                 rsyslog.d     udev
+bash.bashrc                    dnsmasq.d             init.d               lvm             pam.d                    screenrc      ufw
+bash_completion                dnsmasq.d-available   initramfs-tools      machine-id      papersize                securetty     update-manager
+bash_completion.d              dpkg                  inputrc              magic           passwd                   security      update-motd.d
+bindresvport.blacklist         ec2_version           iproute2             magic.mime      passwd-                  selinux       update-notifier
+binfmt.d                       emacs                 iscsi                mailcap         perl                     services      updatedb.conf
+byobu                          environment           issue                mailcap.order   pm                       sgml          vault.d
+ca-certificates                ethertypes            issue.net            manpath.config  polkit-1                 shadow        vim
+ca-certificates.conf           fonts                 kernel               mdadm           pollinate                shadow-       vmware-tools
+ca-certificates.conf.dpkg-old  fstab                 kernel-img.conf      mime.types      popularity-contest.conf  shells        vtrgb
+calendar                       fuse.conf             landscape            mke2fs.conf     profile                  skel          wgetrc
+cloud                          gai.conf              ld.so.cache          modprobe.d      profile.d                sos.conf      xdg
+console-setup                  ghostscript           ld.so.conf           modules         protocols                ssh           xml
+cron.d                         groff                 ld.so.conf.d         modules-load.d  python3                  ssl           zsh_command_not_found
+cron.daily                     group                 ldap                 mtab            python3.6                subgid
+ubuntu@ip-10-0-101-22:/etc$ cd ssh
+ubuntu@ip-10-0-101-22:/etc/ssh$ ls
+moduli      ssh_host_dsa_key      ssh_host_ecdsa_key      ssh_host_ed25519_key      ssh_host_rsa_key      ssh_import_id  trusted-user-ca-keys.pem
+ssh_config  ssh_host_dsa_key.pub  ssh_host_ecdsa_key.pub  ssh_host_ed25519_key.pub  ssh_host_rsa_key.pub  sshd_config
+ubuntu@ip-10-0-101-22:/etc/ssh$ cat ssh_host_rsa_key.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGI9UTs4/wcM0FLM8LSSJ3fEajk9ndAs3BstP+JjqnldWjF2keFs7MhGV4f9GSFqqgi3pA16fQnD8mNyw/291TTCj3JYtFRmKePMRGxatKt/AW4jvJGBBNaMhXyb0BYlYPBoTwDaTNagL5gNUkxxBS4W70+kAvp/jlbK3DGXy9jzdGsA384lHAQFalsfhqD5ZYG3nCUt06ZrtvjDQXphWstimHVDx2ic7X9UPdNt3vqVkcofR148M25rRT5qyg1z3U8VEmLYXv2CIZZAiCpiOIbo0+Mhipbo0VA3H967x8IZf2ESaH1cvvn6jIoJW49cteBLrEmLdaa1A/6DdggoLn root@ip-10-0-101-22
+ubuntu@ip-10-0-101-22:/etc/ssh$ pwd
+/etc/ssh
+ubuntu@ip-10-0-101-22:/etc/ssh$ cd
+ubuntu@ip-10-0-101-22:~$ vault write ssh-client-signer/sign/my-role \
+>     public_key=@/etc/ssh/ssh_host_rsa_key.pub
+Key              Value
+---              -----
+serial_number    ed08d260a2dc0df6
+signed_key       ssh-rsa-cert-v01@openssh.com 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
+ubuntu@ip-10-0-101-22:~$ vault write -field=signed_key ssh-client-signer/sign/my-role \
+>     public_key=@$HOME/.ssh/id_rsa.pub > signed-cert.pub
+Failed to parse K=V data: invalid key/value pair "public_key=@/home/ubuntu/.ssh/id_rsa.pub": error reading file: open /home/ubuntu/.ssh/id_rsa.pub: no such file or directory
+ubuntu@ip-10-0-101-22:~$ vault write -field=signed_key ssh-client-signer/sign/my-role     public_key=@/etc/ssh/ssh_host_rsa_key.pub > signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ ls
+ payload.json  'plugin_name=mysql-database-plugin'   readonly.sql   recovery_key   root_token   signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ ssh -i signed-cert.pub -i ~/.ssh/ ssh_host_rsa_key ubuntu@10-0-101-22
+ssh: Could not resolve hostname ssh_host_rsa_key: Temporary failure in name resolution
+ubuntu@ip-10-0-101-22:~$ ssh -i signed-cert.pub -i ~/.ssh/ssh_host_rsa_key ubuntu@10-0-101-22
+Warning: Identity file /home/ubuntu/.ssh/ssh_host_rsa_key not accessible: No such file or directory.
+ssh: Could not resolve hostname 10-0-101-22: Temporary failure in name resolution
+ubuntu@ip-10-0-101-22:~$ ssh -i signed-cert.pub -i /etc/.ssh/ssh_host_rsa_key ubuntu@52.90.88.15
+Warning: Identity file /etc.ssh/ssh_host_rsa_key not accessible: No such file or directory.
+^C
+ubuntu@ip-10-0-101-22:~$ ssh -i signed-cert.pub -i @/etc/ssh/ssh_host_rsa_key ubuntu@152.90.88.15
+Warning: Identity file @/etc/ssh/ssh_host_rsa_key not accessible: No such file or directory.
+^C
+ubuntu@ip-10-0-101-22:~$ ls
+ payload.json  'plugin_name=mysql-database-plugin'   readonly.sql   recovery_key   root_token   signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ cd /etc/
+ubuntu@ip-10-0-101-22:/etc$ ls
+ImageMagick-6                  cron.hourly           group-               legal           nanorc                   rc0.d         subgid-
+NetworkManager                 cron.monthly          grub.d               libaudit.conf   netplan                  rc1.d         subuid
+X11                            cron.weekly           gshadow              libpaper.d      network                  rc2.d         subuid-
+acpi                           crontab               gshadow-             lighttpd        networkd-dispatcher      rc3.d         sudoers
+adduser.conf                   cryptsetup-initramfs  gss                  locale.alias    networks                 rc4.d         sudoers.d
+alternatives                   crypttab              hdparm.conf          locale.gen      newt                     rc5.d         sysctl.conf
+apache2                        dbus-1                hibagent-config.cfg  localtime       nsswitch.conf            rc6.d         sysctl.d
+apm                            debconf.conf          hibinit-config.cfg   logcheck        ntp.conf                 rcS.d         systemd
+apparmor                       debian_version        host.conf            login.defs      opt                      resolv.conf   terminfo
+apparmor.d                     default               hostname             logrotate.conf  os-release               rmt           timezone
+apport                         deluser.conf          hosts                logrotate.d     overlayroot.conf         rpc           tmpfiles.d
+apt                            depmod.d              hosts.allow          lsb-release     overlayroot.local.conf   rsyslog.conf  ucf.conf
+at.deny                        dhcp                  hosts.deny           ltrace.conf     pam.conf                 rsyslog.d     udev
+bash.bashrc                    dnsmasq.d             init.d               lvm             pam.d                    screenrc      ufw
+bash_completion                dnsmasq.d-available   initramfs-tools      machine-id      papersize                securetty     update-manager
+bash_completion.d              dpkg                  inputrc              magic           passwd                   security      update-motd.d
+bindresvport.blacklist         ec2_version           iproute2             magic.mime      passwd-                  selinux       update-notifier
+binfmt.d                       emacs                 iscsi                mailcap         perl                     services      updatedb.conf
+byobu                          environment           issue                mailcap.order   pm                       sgml          vault.d
+ca-certificates                ethertypes            issue.net            manpath.config  polkit-1                 shadow        vim
+ca-certificates.conf           fonts                 kernel               mdadm           pollinate                shadow-       vmware-tools
+ca-certificates.conf.dpkg-old  fstab                 kernel-img.conf      mime.types      popularity-contest.conf  shells        vtrgb
+calendar                       fuse.conf             landscape            mke2fs.conf     profile                  skel          wgetrc
+cloud                          gai.conf              ld.so.cache          modprobe.d      profile.d                sos.conf      xdg
+console-setup                  ghostscript           ld.so.conf           modules         protocols                ssh           xml
+cron.d                         groff                 ld.so.conf.d         modules-load.d  python3                  ssl           zsh_command_not_found
+cron.daily                     group                 ldap                 mtab            python3.6                subgid
+ubuntu@ip-10-0-101-22:/etc$ cd ssh
+ubuntu@ip-10-0-101-22:/etc/ssh$ ls
+moduli      ssh_host_dsa_key      ssh_host_ecdsa_key      ssh_host_ed25519_key      ssh_host_rsa_key      ssh_import_id  trusted-user-ca-keys.pem
+ssh_config  ssh_host_dsa_key.pub  ssh_host_ecdsa_key.pub  ssh_host_ed25519_key.pub  ssh_host_rsa_key.pub  sshd_config
+ubuntu@ip-10-0-101-22:/etc/ssh$ ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/ubuntu/.ssh/id_rsa): id_rsa.pub
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Saving key "id_rsa.pub" failed: Permission denied
+ubuntu@ip-10-0-101-22:/etc/ssh$ cd
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): id_rsa.pub
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in id_rsa.pub.
+Your public key has been saved in id_rsa.pub.pub.
+The key fingerprint is:
+SHA256:2QTaS9P6XLBmQgrAxoo3Ry/x9vv0Qe5ciB4uv4Pzdug root@ip-10-0-101-22
+The key's randomart image is:
++---[RSA 2048]----+
+| o.     .        |
+|  +.o  o o       |
+|.o ..+. = +      |
+|o o o.++ B o     |
+| . o o..S = o    |
+|        .* = .   |
+|         o*.+ .  |
+|        =++=.o   |
+|         OE++    |
++----[SHA256]-----+
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa.pub  id_rsa.pub.pub  snap
+root@ip-10-0-101-22:~# rm id_rsa.pub
+root@ip-10-0-101-22:~# rm id_rsa.pub.pub
+root@ip-10-0-101-22:~# ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): id_rsa
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in id_rsa.
+Your public key has been saved in id_rsa.pub.
+The key fingerprint is:
+SHA256:t+KCkzJfxaZXb6dzOFswq5U3juv28Strn2ZAncbOiRU root@ip-10-0-101-22
+The key's randomart image is:
++---[RSA 2048]----+
+|                 |
+|               E |
+|              o o|
+|       .     . * |
+|        S o + * .|
+|       + o o B + |
+|     oo o . *.B  |
+|  o +..o . +=X.*.|
+|   +.. .. .oBOO+o|
++----[SHA256]-----+
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  snap
+root@ip-10-0-101-22:~# vault write ssh-client-signer/sign/my-role \
+>     public_key=@./id_rsa.pub
+Key              Value
+---              -----
+serial_number    a0a0cc8a393e7a70
+signed_key       ssh-rsa-cert-v01@openssh.com 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
+root@ip-10-0-101-22:~# vault write -field=signed_key ssh-client-signer/sign/my-role \
+>     public_key=@./id_rsa.pub > signed-cert.pub
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# ssh-keygen -Lf ./signed-cert.pub
+./signed-cert.pub:
+        Type: ssh-rsa-cert-v01@openssh.com user certificate
+        Public key: RSA-CERT SHA256:t+KCkzJfxaZXb6dzOFswq5U3juv28Strn2ZAncbOiRU
+        Signing CA: RSA SHA256:IqzEWNKzT5iGqbyEk610iJRx8zGq7zA+GkpTBWlZ324
+        Key ID: "vault-root-b7e28293325fc5a6576fa773385b30ab95378eebf6f12b6b9f66409dc6ce8915"
+        Serial: 16045636589707857391
+        Valid: from 2020-10-13T10:39:27 to 2020-10-13T11:09:57
+        Principals:
+                ubuntu
+        Critical Options: (none)
+        Extensions:
+                permit-pty
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i ./id_rsa ubuntu@10-0-101-22
+ssh: Could not resolve hostname 10-0-101-22: Temporary failure in name resolution
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i ./id_rsa ubuntu@10.0.101.22
+The authenticity of host '10.0.101.22 (10.0.101.22)' can't be established.
+ECDSA key fingerprint is SHA256:xH0/t2xPpCnxHnuQciOGproWeWcC0Zo0/UB4P+7NIFU.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.0.101.22' (ECDSA) to the list of known hosts.
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 10:42:07 UTC 2020
+
+  System load:  0.01              Processes:           102
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 31%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 10:14:58 2020 from 49.37.176.109
+ubuntu@ip-10-0-101-22:~$ ls
+ payload.json  'plugin_name=mysql-database-plugin'   readonly.sql   recovery_key   root_token   signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# cat id_rsa
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEApIPaBZGwcskbAHSqhoOjiwLiUAMOmAeYp+P9K3njDZTI3dkx
+Jhq63hU1nWJI8Z3TiKc6wiF3E3Pa0iYSoN2s/dQgFpvkUHwXSsK+86AXF/KPLa/a
+y0K75Y0m/OSZSxGjVSLghMYh6ekhuOQsaSJA56z3/gwwrz1MYw0fpNjeBv85PW8g
+knhZ5iwRfmzaAtXMERxaHxe2CZ1HYTroC1dGzxnRpY72LLdP5gjXnpP9rzEzZqxn
+0Gh0Kwn67XF+Zup1+AugbnzzGBpgicA7MdeIlzgWfb84XdQOGcaMlagzAdac2Jy/
+Biuj1kSeJAGUcM1YKurXIJE4XpauO/sySGg81wIDAQABAoIBAHU5Zl7Vgu8nkU/v
+0ZprrlrdQTlWFE4MC6CF+d3CyiDhRYeevUCzhze70SpF4EgZ96LF1j6B7gE0alWX
+v2pUynFLd1nk1vjqkwY4YivihNIRiig5yCNRd+WHgKJumTQ+ay283lJ9g6jS7655
+F5QKTklGnKavNPmJKibiMQwbY4mDqfAZi26zE/M1ZHjEJdF1m72FLt4zHTGtLl9A
+qDK0v7dCq3nyKQzfCywNiKFDzLSdJz7MQOWev/ssCYSB6nMpHNuph52R30dTn6aQ
+6Qsv1740eAVEIRCGs7WX4woWjhEdAjOxXDJUgGY+BhCSqy5EXyjPMOUNuaGr25Dr
+uUwgtmECgYEA2QWrZUVrxGzDJHADWZ3bsyahT8rxBK/hcrh/0arXRaSIL2D7gbCc
+iTmGPHfQ7tGfli7pTvBjch8eB9HkPGGzbYU/XhIfNeqs1DwnEZGGd2qHMzSlBD60
+bRb4fALeizIrQFyFT47AAehL6W2a6QVkFSCGlxihOgPTxe+TiE74zh8CgYEAwg/9
+Yh4vmXxMCZV8bBzyN/LzZtjONIJi7D2NKXU6Vijg2F9GhpHg84s1XEdxh4ikVKAA
+Dx4k1r/5Nl6DMAiM6hh8GAtgnizrK0JVymF/qMZDdElrZAUeOWjtLWMYo8oJ9oap
+zmrAzCMcrWVtafKwM9lQhDRIomFagwIVWwMPykkCgYAGqnrqQGif/us7iklADm46
+IXyg883VZAWbvXkHmqTEGdqpAeSXxjH4sRCjeNatDzlEpqo5535Wegg1G0hUZnfZ
+bFdW712QDWZDmplkm8CymE4Qz5Ql/jsSgrsdLAVj5yWW84CQwgS5ykXSpLA2ahj5
+4SbhKzuAia+Oi95POIXB5wKBgQC4KRZrM3w2asd53Nt7eai/QZaMxjhBim64A91f
+N3lJ5Hcjvp6d+/f/Bt93l/D8Dsbr6/7CWffZt8qXNu/F+IdJbDzvUHS7BqORpNzn
+Nsk/8A55X2dDPrwk/Rb/GGh8nrH/umGQmqwlzThcsME5Zu6h9Zu8KiW3uy1639JG
+UUx9yQKBgQCuQNZURWLGbdSWjQt+ev0yvR1ToiYLT7uGeGX6Rj82VgL4JRhxvkOK
+zHCdfvkQe0dv4TxibfdKnHqvml+txDjzOpuKyXz5GBw+fNzZGexisICtrcb4WjAl
+l6zZFGLny3B/DsWYge2s/SQWjHcpEbTq8jaVNsgyumwOClH/7dQSHg==
+-----END RSA PRIVATE KEY-----
+root@ip-10-0-101-22:~# Connection reset by 52.90.88.15 port 22
+
+C:\Users\M1055938\Downloads>ssh -i vault-eks.pem ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 10:52:21 UTC 2020
+
+  System load:  0.0               Processes:           109
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 31%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 10:42:08 2020 from 10.0.101.22
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# cat signed-cert.pub
+ssh-rsa-cert-v01@openssh.com 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
+root@ip-10-0-101-22:~# exit
+logout
+ubuntu@ip-10-0-101-22:~$ ls
+ payload.json  'plugin_name=mysql-database-plugin'   readonly.sql   recovery_key   root_token   signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ exit
+logout
+Connection to 52.90.88.15 closed.
+
+C:\Users\M1055938\Downloads>ssh -i vault-eks.pem ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 10:59:14 UTC 2020
+
+  System load:  0.0               Processes:           112
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 32%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 10:52:22 2020 from 157.48.216.45
+ubuntu@ip-10-0-101-22:~$ ssh -i signed-cert.pub -i ./id_rsa ubuntu@10-0-101-22
+Warning: Identity file ./id_rsa not accessible: No such file or directory.
+ssh: Could not resolve hostname 10-0-101-22: Temporary failure in name resolution
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i ./id_rsa ubuntu@10-0-101-22
+ssh: Could not resolve hostname 10-0-101-22: Temporary failure in name resolution
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i ./id_rsa ubuntu@10.0.101.22
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 11:00:02 UTC 2020
+
+  System load:  0.08              Processes:           119
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 33%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 10:59:16 2020 from 157.48.216.45
+ubuntu@ip-10-0-101-22:~$ Connection reset by 52.90.88.15 port 22
+
+C:\Users\M1055938\Downloads>ssh -i vault-eks.pem ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 11:19:55 UTC 2020
+
+  System load:  0.0               Processes:           120
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 33%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 11:00:06 2020 from 10.0.101.22
+ubuntu@ip-10-0-101-22:~$ ls
+ payload.json  'plugin_name=mysql-database-plugin'   readonly.sql   recovery_key   root_token   signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ cat signed-cert.pub
+ssh-rsa-cert-v01@openssh.com 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
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# cat signed-cert.pub
+ssh-rsa-cert-v01@openssh.com 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
+root@ip-10-0-101-22:~# cat id_rsa
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEApIPaBZGwcskbAHSqhoOjiwLiUAMOmAeYp+P9K3njDZTI3dkx
+Jhq63hU1nWJI8Z3TiKc6wiF3E3Pa0iYSoN2s/dQgFpvkUHwXSsK+86AXF/KPLa/a
+y0K75Y0m/OSZSxGjVSLghMYh6ekhuOQsaSJA56z3/gwwrz1MYw0fpNjeBv85PW8g
+knhZ5iwRfmzaAtXMERxaHxe2CZ1HYTroC1dGzxnRpY72LLdP5gjXnpP9rzEzZqxn
+0Gh0Kwn67XF+Zup1+AugbnzzGBpgicA7MdeIlzgWfb84XdQOGcaMlagzAdac2Jy/
+Biuj1kSeJAGUcM1YKurXIJE4XpauO/sySGg81wIDAQABAoIBAHU5Zl7Vgu8nkU/v
+0ZprrlrdQTlWFE4MC6CF+d3CyiDhRYeevUCzhze70SpF4EgZ96LF1j6B7gE0alWX
+v2pUynFLd1nk1vjqkwY4YivihNIRiig5yCNRd+WHgKJumTQ+ay283lJ9g6jS7655
+F5QKTklGnKavNPmJKibiMQwbY4mDqfAZi26zE/M1ZHjEJdF1m72FLt4zHTGtLl9A
+qDK0v7dCq3nyKQzfCywNiKFDzLSdJz7MQOWev/ssCYSB6nMpHNuph52R30dTn6aQ
+6Qsv1740eAVEIRCGs7WX4woWjhEdAjOxXDJUgGY+BhCSqy5EXyjPMOUNuaGr25Dr
+uUwgtmECgYEA2QWrZUVrxGzDJHADWZ3bsyahT8rxBK/hcrh/0arXRaSIL2D7gbCc
+iTmGPHfQ7tGfli7pTvBjch8eB9HkPGGzbYU/XhIfNeqs1DwnEZGGd2qHMzSlBD60
+bRb4fALeizIrQFyFT47AAehL6W2a6QVkFSCGlxihOgPTxe+TiE74zh8CgYEAwg/9
+Yh4vmXxMCZV8bBzyN/LzZtjONIJi7D2NKXU6Vijg2F9GhpHg84s1XEdxh4ikVKAA
+Dx4k1r/5Nl6DMAiM6hh8GAtgnizrK0JVymF/qMZDdElrZAUeOWjtLWMYo8oJ9oap
+zmrAzCMcrWVtafKwM9lQhDRIomFagwIVWwMPykkCgYAGqnrqQGif/us7iklADm46
+IXyg883VZAWbvXkHmqTEGdqpAeSXxjH4sRCjeNatDzlEpqo5535Wegg1G0hUZnfZ
+bFdW712QDWZDmplkm8CymE4Qz5Ql/jsSgrsdLAVj5yWW84CQwgS5ykXSpLA2ahj5
+4SbhKzuAia+Oi95POIXB5wKBgQC4KRZrM3w2asd53Nt7eai/QZaMxjhBim64A91f
+N3lJ5Hcjvp6d+/f/Bt93l/D8Dsbr6/7CWffZt8qXNu/F+IdJbDzvUHS7BqORpNzn
+Nsk/8A55X2dDPrwk/Rb/GGh8nrH/umGQmqwlzThcsME5Zu6h9Zu8KiW3uy1639JG
+UUx9yQKBgQCuQNZURWLGbdSWjQt+ev0yvR1ToiYLT7uGeGX6Rj82VgL4JRhxvkOK
+zHCdfvkQe0dv4TxibfdKnHqvml+txDjzOpuKyXz5GBw+fNzZGexisICtrcb4WjAl
+l6zZFGLny3B/DsWYge2s/SQWjHcpEbTq8jaVNsgyumwOClH/7dQSHg==
+-----END RSA PRIVATE KEY-----
+root@ip-10-0-101-22:~#
+root@ip-10-0-101-22:~#  vault write ssh-client-signer/sign/my-role \
+>      public_key=@./id_rsa.pub
+Key              Value
+---              -----
+serial_number    7e170f5c242c4663
+signed_key       ssh-rsa-cert-v01@openssh.com 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
+root@ip-10-0-101-22:~# Connection reset by 52.90.88.15 port 22
+
+C:\Users\M1055938\Downloads>ssh -i vault-eks.pem ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 11:34:48 UTC 2020
+
+  System load:  0.0               Processes:           124
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 34%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 11:19:56 2020 from 157.48.216.45
+ubuntu@ip-10-0-101-22:~$ ls
+ payload.json  'plugin_name=mysql-database-plugin'   readonly.sql   recovery_key   root_token   signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ rm signed-cert.pub
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# chmod 0600 /etc/ssh/trusted-user-ca-keys.pem
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# chmod 0600 signed-cert.pub
+root@ip-10-0-101-22:~# ssh-keygen -Lf signed-cert.pub
+signed-cert.pub:
+        Type: ssh-rsa-cert-v01@openssh.com user certificate
+        Public key: RSA-CERT SHA256:t+KCkzJfxaZXb6dzOFswq5U3juv28Strn2ZAncbOiRU
+        Signing CA: RSA SHA256:IqzEWNKzT5iGqbyEk610iJRx8zGq7zA+GkpTBWlZ324
+        Key ID: "vault-root-b7e28293325fc5a6576fa773385b30ab95378eebf6f12b6b9f66409dc6ce8915"
+        Serial: 16045636589707857391
+        Valid: from 2020-10-13T10:39:27 to 2020-10-13T11:09:57
+        Principals:
+                ubuntu
+        Critical Options: (none)
+        Extensions:
+                permit-pty
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# rm signed-cert.pub
+root@ip-10-0-101-22:~# vault write -field=signed_key ssh-client-signer/sign/my-role \
+>     public_key=@./id_rsa.pub > signed-cert.pub
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa ubuntu@52.90.88.15
+The authenticity of host '52.90.88.15 (52.90.88.15)' can't be established.
+ECDSA key fingerprint is SHA256:xH0/t2xPpCnxHnuQciOGproWeWcC0Zo0/UB4P+7NIFU.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '52.90.88.15' (ECDSA) to the list of known hosts.
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 11:41:00 UTC 2020
+
+  System load:  0.0               Processes:           131
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 34%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 11:34:49 2020 from 157.48.216.45
+ubuntu@ip-10-0-101-22:~$ ls
+ pavan   pavan.pub   payload.json  'plugin_name=mysql-database-plugin'   readonly.sql   recovery_key   root_token
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# cat signed-cert.pub
+ssh-rsa-cert-v01@openssh.com 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
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# cat id_rsa
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEApIPaBZGwcskbAHSqhoOjiwLiUAMOmAeYp+P9K3njDZTI3dkx
+Jhq63hU1nWJI8Z3TiKc6wiF3E3Pa0iYSoN2s/dQgFpvkUHwXSsK+86AXF/KPLa/a
+y0K75Y0m/OSZSxGjVSLghMYh6ekhuOQsaSJA56z3/gwwrz1MYw0fpNjeBv85PW8g
+knhZ5iwRfmzaAtXMERxaHxe2CZ1HYTroC1dGzxnRpY72LLdP5gjXnpP9rzEzZqxn
+0Gh0Kwn67XF+Zup1+AugbnzzGBpgicA7MdeIlzgWfb84XdQOGcaMlagzAdac2Jy/
+Biuj1kSeJAGUcM1YKurXIJE4XpauO/sySGg81wIDAQABAoIBAHU5Zl7Vgu8nkU/v
+0ZprrlrdQTlWFE4MC6CF+d3CyiDhRYeevUCzhze70SpF4EgZ96LF1j6B7gE0alWX
+v2pUynFLd1nk1vjqkwY4YivihNIRiig5yCNRd+WHgKJumTQ+ay283lJ9g6jS7655
+F5QKTklGnKavNPmJKibiMQwbY4mDqfAZi26zE/M1ZHjEJdF1m72FLt4zHTGtLl9A
+qDK0v7dCq3nyKQzfCywNiKFDzLSdJz7MQOWev/ssCYSB6nMpHNuph52R30dTn6aQ
+6Qsv1740eAVEIRCGs7WX4woWjhEdAjOxXDJUgGY+BhCSqy5EXyjPMOUNuaGr25Dr
+uUwgtmECgYEA2QWrZUVrxGzDJHADWZ3bsyahT8rxBK/hcrh/0arXRaSIL2D7gbCc
+iTmGPHfQ7tGfli7pTvBjch8eB9HkPGGzbYU/XhIfNeqs1DwnEZGGd2qHMzSlBD60
+bRb4fALeizIrQFyFT47AAehL6W2a6QVkFSCGlxihOgPTxe+TiE74zh8CgYEAwg/9
+Yh4vmXxMCZV8bBzyN/LzZtjONIJi7D2NKXU6Vijg2F9GhpHg84s1XEdxh4ikVKAA
+Dx4k1r/5Nl6DMAiM6hh8GAtgnizrK0JVymF/qMZDdElrZAUeOWjtLWMYo8oJ9oap
+zmrAzCMcrWVtafKwM9lQhDRIomFagwIVWwMPykkCgYAGqnrqQGif/us7iklADm46
+IXyg883VZAWbvXkHmqTEGdqpAeSXxjH4sRCjeNatDzlEpqo5535Wegg1G0hUZnfZ
+bFdW712QDWZDmplkm8CymE4Qz5Ql/jsSgrsdLAVj5yWW84CQwgS5ykXSpLA2ahj5
+4SbhKzuAia+Oi95POIXB5wKBgQC4KRZrM3w2asd53Nt7eai/QZaMxjhBim64A91f
+N3lJ5Hcjvp6d+/f/Bt93l/D8Dsbr6/7CWffZt8qXNu/F+IdJbDzvUHS7BqORpNzn
+Nsk/8A55X2dDPrwk/Rb/GGh8nrH/umGQmqwlzThcsME5Zu6h9Zu8KiW3uy1639JG
+UUx9yQKBgQCuQNZURWLGbdSWjQt+ev0yvR1ToiYLT7uGeGX6Rj82VgL4JRhxvkOK
+zHCdfvkQe0dv4TxibfdKnHqvml+txDjzOpuKyXz5GBw+fNzZGexisICtrcb4WjAl
+l6zZFGLny3B/DsWYge2s/SQWjHcpEbTq8jaVNsgyumwOClH/7dQSHg==
+-----END RSA PRIVATE KEY-----
+root@ip-10-0-101-22:~# Connection reset by 52.90.88.15 port 22
+
+C:\Users\M1055938\Downloads>ssh -i vault-eks.pem ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 13:17:05 UTC 2020
+
+  System load:  0.06              Processes:           117
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 33%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 12:25:06 2020 from 49.37.176.109
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa ubuntu@52.90.88.15
+ubuntu@52.90.88.15: Permission denied (publickey).
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa ubuntu@52.90.88.15
+ubuntu@52.90.88.15: Permission denied (publickey).
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa ubuntu@10.0.101.22
+ubuntu@10.0.101.22: Permission denied (publickey).
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa ubuntu@10.0.101.22
+ubuntu@10.0.101.22: Permission denied (publickey).
+root@ip-10-0-101-22:~# vault write -field=signed_key ssh-client-signer/sign/my-role \
+>  public_key=@./id_rsa.pub > signed-cert.pub
+Error writing data to ssh-client-signer/sign/my-role: Error making API request.
+
+URL: PUT http://127.0.0.1:8200/v1/ssh-client-signer/sign/my-role
+Code: 404. Errors:
+
+* no handler for route 'ssh-client-signer/sign/my-role'
+root@ip-10-0-101-22:~# vault login
+Token (will be hidden):
+Success! You are now authenticated. The token information displayed below
+is already stored in the token helper. You do NOT need to run "vault login"
+again. Future Vault requests will automatically use this token.
+
+Key                  Value
+---                  -----
+token                s.IZeqoi10Pez65z1hEqHvbiWb
+token_accessor       rUPfLpA7unw1FQqF1AMNouzH
+token_duration       ∞
+token_renewable      false
+token_policies       ["root"]
+identity_policies    []
+policies             ["root"]
+root@ip-10-0-101-22:~# vault write -field=signed_key ssh-client-signer/sign/my-role \
+> public_key=@./id_rsa.pub > signed-cert.pub
+Error writing data to ssh-client-signer/sign/my-role: Error making API request.
+
+URL: PUT http://127.0.0.1:8200/v1/ssh-client-signer/sign/my-role
+Code: 404. Errors:
+
+* no handler for route 'ssh-client-signer/sign/my-role'
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# vault write -field=signed_key ssh-client-signer/sign/my-role public_key=@./id_rsa.pub > signed-cert.pub
+Error writing data to ssh-client-signer/sign/my-role: Error making API request.
+
+URL: PUT http://127.0.0.1:8200/v1/ssh-client-signer/sign/my-role
+Code: 404. Errors:
+
+* no handler for route 'ssh-client-signer/sign/my-role'
+root@ip-10-0-101-22:~# exit
+logout
+ubuntu@ip-10-0-101-22:~$ exit
+logout
+Connection to 52.90.88.15 closed.
+
+C:\Users\M1055938\Downloads>ssh -i vault-eks.pem ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 13:30:00 UTC 2020
+
+  System load:  0.01              Processes:           119
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 33%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 13:17:06 2020 from 157.48.216.45
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# vault login
+Token (will be hidden):
+Success! You are now authenticated. The token information displayed below
+is already stored in the token helper. You do NOT need to run "vault login"
+again. Future Vault requests will automatically use this token.
+
+Key                  Value
+---                  -----
+token                s.IZeqoi10Pez65z1hEqHvbiWb
+token_accessor       rUPfLpA7unw1FQqF1AMNouzH
+token_duration       ∞
+token_renewable      false
+token_policies       ["root"]
+identity_policies    []
+policies             ["root"]
+root@ip-10-0-101-22:~#
+
+...............................................................................................................................
+vault read -field=public_key ssh-client-signer/config/ca > /etc/ssh/trusted-user-ca-keys.pem
+-bash: /etc/ssh/trusted-user-ca-keys.pem: Permission denied
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# vault read -field=public_key ssh-client-signer/config/ca > /etc/ssh/trusted-user-ca-keys.pem
+root@ip-10-0-101-22:~# cd /etc/
+root@ip-10-0-101-22:/etc# cd ssh
+root@ip-10-0-101-22:/etc/ssh# ls
+moduli            ssh_host_dsa_key.pub    ssh_host_ed25519_key      ssh_host_rsa_key.pub  trusted-user-ca-keys.pem
+ssh_config        ssh_host_ecdsa_key      ssh_host_ed25519_key.pub  ssh_import_id
+ssh_host_dsa_key  ssh_host_ecdsa_key.pub  ssh_host_rsa_key          sshd_config
+root@ip-10-0-101-22:/etc/ssh# vi sshd_config
+root@ip-10-0-101-22:/etc/ssh# cd
+root@ip-10-0-101-22:~# vault write ssh-client-signer/roles/my-role -<<"EOH"
+> {
+>   "allow_user_certificates": true,
+>   "allowed_users": "*",
+>   "allowed_extensions": "permit-pty,permit-port-forwarding",
+>   "default_extensions": [
+>     {
+>       "permit-pty": ""
+>     }
+>   ],
+>   "key_type": "ca",
+>   "default_user": "ubuntu",
+>   "ttl": "30m0s"
+> }
+> EOH
+Success! Data written to: ssh-client-signer/roles/my-role
+root@ip-10-0-101-22:~# ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): id_rsa
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in id_rsa.
+Your public key has been saved in id_rsa.pub.
+The key fingerprint is:
+SHA256:N1NMtC7Or6Lw1VcLQ3l3+9LQrNoVPehDDakCu2YHrHs root@ip-10-0-101-22
+The key's randomart image is:
++---[RSA 2048]----+
+|           .o    |
+|           o o.  |
+|       .    *o. o|
+|      . o  +..+++|
+|       +S.=.+oo=+|
+|      . o=.+o+ =+|
+|    .. +..+ .o+ +|
+|     o+Eo  o o.o |
+|     .+. ...o .  |
++----[SHA256]-----+
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  snap
+root@ip-10-0-101-22:~# vault write ssh-client-signer/sign/my-role \
+>  public_key=@./id_rsa.pub
+Key              Value
+---              -----
+serial_number    182384bc1f4b34bc
+signed_key       ssh-rsa-cert-v01@openssh.com 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
+root@ip-10-0-101-22:~# vault write -field=signed_key ssh-client-signer/sign/my-role \
+>  public_key=@./id_rsa.pub > signed-cert.pub
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# ssh-keygen -Lf ./signed-cert.pub
+./signed-cert.pub:
+        Type: ssh-rsa-cert-v01@openssh.com user certificate
+        Public key: RSA-CERT SHA256:N1NMtC7Or6Lw1VcLQ3l3+9LQrNoVPehDDakCu2YHrHs
+        Signing CA: RSA SHA256:/flwGqbF5sMimWa/UpFfKgt97yqw95IUKhw/7rEjJfU
+        Key ID: "vault-root-37534cb42eceafa2f0d5570b437977fbd2d0acda153de8430da902bb6607ac7b"
+        Serial: 6847725007235035367
+        Valid: from 2020-10-13T13:45:09 to 2020-10-13T14:15:39
+        Principals:
+                ubuntu
+        Critical Options: (none)
+        Extensions:
+                permit-pty
+root@ip-10-0-101-22:~#  ssh -i signed-cert.pub -i ./id_rsa username@10.0.101.22
+username@10.0.101.22: Permission denied (publickey).
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa username@10.0.101.22
+username@10.0.101.22: Permission denied (publickey).
+root@ip-10-0-101-22:~# chmod 600 signed-cert.pub
+root@ip-10-0-101-22:~# chmod 600 id_rsa
+root@ip-10-0-101-22:~# chmod 600 id_rsa.pub
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa username@10.0.10
+^C
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa username@10.0.101.22
+username@10.0.101.22: Permission denied (publickey).
+root@ip-10-0-101-22:~# exit
+logout
+ubuntu@ip-10-0-101-22:~$ ssh -i signed-cert.pub -i id_rsa username@10.0.101.22
+Warning: Identity file signed-cert.pub not accessible: No such file or directory.
+Warning: Identity file id_rsa not accessible: No such file or directory.
+The authenticity of host '10.0.101.22 (10.0.101.22)' can't be established.
+ECDSA key fingerprint is SHA256:xH0/t2xPpCnxHnuQciOGproWeWcC0Zo0/UB4P+7NIFU.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.0.101.22' (ECDSA) to the list of known hosts.
+username@10.0.101.22: Permission denied (publickey).
+ubuntu@ip-10-0-101-22:~$ ssh -i signed-cert.pub -i id_rsa username@52.90.88.15
+Warning: Identity file signed-cert.pub not accessible: No such file or directory.
+Warning: Identity file id_rsa not accessible: No such file or directory.
+The authenticity of host '52.90.88.15 (52.90.88.15)' can't be established.
+ECDSA key fingerprint is SHA256:xH0/t2xPpCnxHnuQciOGproWeWcC0Zo0/UB4P+7NIFU.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '52.90.88.15' (ECDSA) to the list of known hosts.
+username@52.90.88.15: Permission denied (publickey).
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa username@10.0.101.22
+username@10.0.101.22: Permission denied (publickey).
+root@ip-10-0-101-22:~# rm id_rsa
+root@ip-10-0-101-22:~# rm id_rsa.pub
+root@ip-10-0-101-22:~# rm signed-cert.pub
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  snap
+root@ip-10-0-101-22:~# vault secrets enable -path=ssh-host-signer ssh
+Success! Enabled the ssh secrets engine at: ssh-host-signer/
+root@ip-10-0-101-22:~# vault secrets enable -path=ssh-client-signer ssh
+Error enabling: Error making API request.
+
+URL: POST http://127.0.0.1:8200/v1/sys/mounts/ssh-client-signer
+Code: 400. Errors:
+
+* path is already in use at ssh-client-signer/
+root@ip-10-0-101-22:~# vault write ssh-client-signer/config/ca generate_signing_key=true
+Error writing data to ssh-client-signer/config/ca: Error making API request.
+
+URL: PUT http://127.0.0.1:8200/v1/ssh-client-signer/config/ca
+Code: 400. Errors:
+
+* keys are already configured; delete them before reconfiguring
+root@ip-10-0-101-22:~# curl -o /etc/ssh/trusted-user-ca-keys.pem http://127.0.0.1:8200/v1/ssh-client-signer/public_key
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   725  100   725    0     0   141k      0 --:--:-- --:--:-- --:--:--  141k
+root@ip-10-0-101-22:~# cd /etc/ssh/
+root@ip-10-0-101-22:/etc/ssh# ls
+moduli            ssh_host_dsa_key.pub    ssh_host_ed25519_key      ssh_host_rsa_key.pub  trusted-user-ca-keys.pem
+ssh_config        ssh_host_ecdsa_key      ssh_host_ed25519_key.pub  ssh_import_id
+ssh_host_dsa_key  ssh_host_ecdsa_key.pub  ssh_host_rsa_key          sshd_config
+root@ip-10-0-101-22:/etc/ssh# vi sshd_config
+root@ip-10-0-101-22:/etc/ssh# ls
+moduli            ssh_host_dsa_key.pub    ssh_host_ed25519_key      ssh_host_rsa_key.pub  trusted-user-ca-keys.pem
+ssh_config        ssh_host_ecdsa_key      ssh_host_ed25519_key.pub  ssh_import_id
+ssh_host_dsa_key  ssh_host_ecdsa_key.pub  ssh_host_rsa_key          sshd_config
+root@ip-10-0-101-22:/etc/ssh# vault write ssh-client-signer/roles/my-role -<<"EOH"
+> {
+>   "allow_user_certificates": true,
+>   "allowed_users": "*",
+>   "allowed_extensions": "permit-pty,permit-port-forwarding",
+>   "default_extensions": [
+>     {
+>       "permit-pty": ""
+>     }
+>   ],
+>   "key_type": "ca",
+>   "default_user": "ubuntu",
+>   "ttl": "30m0s"
+> }
+> EOH
+Success! Data written to: ssh-client-signer/roles/my-role
+root@ip-10-0-101-22:/etc/ssh# cd
+root@ip-10-0-101-22:~# ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): id_rsa
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in id_rsa.
+Your public key has been saved in id_rsa.pub.
+The key fingerprint is:
+SHA256:mMmf5gxstU346gXoq67lqbi/kyhqhDf4gzNNV9JBUks root@ip-10-0-101-22
+The key's randomart image is:
++---[RSA 2048]----+
+|    .oE          |
+|     o..         |
+|     ...         |
+|    ..o= .       |
+|..   o* S .      |
+|o.+ .o o B       |
+|.B +. = = +      |
+|*o*o o * o       |
+|B==B=...=        |
++----[SHA256]-----+
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  snap
+root@ip-10-0-101-22:~# vault write -field=signed_key ssh-client-signer/sign/my-role \
+>     public_key=@./id_rsa.pub > signed-cert.pub
+root@ip-10-0-101-22:~# ssh-keygen -Lf ~/.ssh/signed-cert.pub
+ssh-keygen: /root/.ssh/signed-cert.pub: No such file or directory
+root@ip-10-0-101-22:~# ssh-keygen -Lf ~/signed-cert.pubb
+/root/signed-cert.pub:
+        Type: ssh-rsa-cert-v01@openssh.com user certificate
+        Public key: RSA-CERT SHA256:mMmf5gxstU346gXoq67lqbi/kyhqhDf4gzNNV9JBUks
+        Signing CA: RSA SHA256:/flwGqbF5sMimWa/UpFfKgt97yqw95IUKhw/7rEjJfU
+        Key ID: "vault-root-98c99fe60c6cb54df8ea05e8abaee5a9b8bf93286a8437f883334d57d241524b"
+        Serial: 5473079297993869559
+        Valid: from 2020-10-13T14:02:50 to 2020-10-13T14:33:20
+        Principals:
+                ubuntu
+        Critical Options: (none)
+        Extensions:
+                permit-pty
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa ubuntu@10.0.101.11
+ssh: connect to host 10.0.101.11 port 22: No route to host
+root@ip-10-0-101-22:~# ssh -i signed-cert.pub -i id_rsa ubuntu@10.0.101.22
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 14:04:35 UTC 2020
+
+  System load:  0.0               Processes:           105
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 32%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 13:36:58 2020 from 157.48.216.45
+ubuntu@ip-10-0-101-22:~$ ls
+ pavan       payload.json                         readonly.sql   root_token      sign.pub   vault.pub
+ pavan.pub  'plugin_name=mysql-database-plugin'   recovery_key   sign-cert.pub   vault
+ubuntu@ip-10-0-101-22:~$ ssh -i signed-cert.pub -i id_rsa ubuntu@10.0.101.11
+Warning: Identity file signed-cert.pub not accessible: No such file or directory.
+Warning: Identity file id_rsa not accessible: No such file or directory.
+^C
+ubuntu@ip-10-0-101-22:~$ ssh -i ./signed-cert.pub -i ./id_rsa ubuntu@10.0.101.11
+Warning: Identity file ./signed-cert.pub not accessible: No such file or directory.
+Warning: Identity file ./id_rsa not accessible: No such file or directory.
+ssh: connect to host 10.0.101.11 port 22: No route to host
+ubuntu@ip-10-0-101-22:~$ ^C
+ubuntu@ip-10-0-101-22:~$ ssh -i ./signed-cert.pub -i ./id_rsa ubuntu@52.90.88.15
+Warning: Identity file ./signed-cert.pub not accessible: No such file or directory.
+Warning: Identity file ./id_rsa not accessible: No such file or directory.
+ubuntu@52.90.88.15: Permission denied (publickey).
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ssh -i ./signed-cert.pub -i ./id_rsa ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 14:10:11 UTC 2020
+
+  System load:  0.0               Processes:           113
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 32%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 14:04:35 2020 from 10.0.101.22
+ubuntu@ip-10-0-101-22:~$ Connection reset by 52.90.88.15 port 22
+
+C:\Users\M1055938\Downloads>ssh -i vault-eks.pem ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 14:16:41 UTC 2020
+
+  System load:  0.0               Processes:           112
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 32%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 14:10:11 2020 from 52.90.88.15
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ls
+ec2policy.hcl  id_rsa  id_rsa.pub  signed-cert.pub  snap
+root@ip-10-0-101-22:~# ssh -i ./signed-cert.pub -i ./id_rsa ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 14:17:09 UTC 2020
+
+  System load:  0.0               Processes:           119
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 33%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 14:16:42 2020 from 157.48.216.45
+ubuntu@ip-10-0-101-22:~$ ls
+ pavan       payload.json                         readonly.sql   root_token      sign.pub   vault.pub
+ pavan.pub  'plugin_name=mysql-database-plugin'   recovery_key   sign-cert.pub   vault
+ubuntu@ip-10-0-101-22:~$ rm plugin_name\=mysql-database-plugin
+ubuntu@ip-10-0-101-22:~$ ls
+pavan  pavan.pub  payload.json  readonly.sql  recovery_key  root_token  sign-cert.pub  sign.pub  vault  vault.pub
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ssh -i ./signed-cert.pub -i ./id_rsa ubuntu@52.90.88.15
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 14:23:12 UTC 2020
+
+  System load:  0.0               Processes:           128
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 34%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 14:17:10 2020 from 52.90.88.15
+ubuntu@ip-10-0-101-22:~$ sudo su -
+root@ip-10-0-101-22:~# ssh -i ./signed-cert.pub -i ./id_rsa ubuntu@52.90.88.1
+^C
+root@ip-10-0-101-22:~# ssh -i ./signed-cert.pub -i ./id_rsa ubuntu@52.90.88.1
+
+^C
+root@ip-10-0-101-22:~# ssh -i ^Cgned-cert.pub -i id_rsa ubuntu@52.90.88.1
+root@ip-10-0-101-22:~# ssh -i ./signed-cert.pub -i ./id_rsa ubuntu@10.0.101.22
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.3.0-1035-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Oct 13 14:26:50 UTC 2020
+
+  System load:  0.0               Processes:           133
+  Usage of /:   26.8% of 7.69GB   Users logged in:     1
+  Memory usage: 35%               IP address for eth0: 10.0.101.22
+  Swap usage:   0%
+
+ * Kubernetes 1.19 is out! Get it in one command with:
+
+     sudo snap install microk8s --channel=1.19 --classic
+
+   https://microk8s.io/ has docs and details.
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+5 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.1 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Tue Oct 13 14:23:13 2020 from 52.90.88.15
+ubuntu@ip-10-0-101-22:~$ cd .ssh
+ubuntu@ip-10-0-101-22:~/.ssh$ ls
+authorized_keys  known_hosts
+ubuntu@ip-10-0-101-22:~/.ssh$ cat authorized_keys
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCKeT8Wop6qqM0DkiRtZp+OXdyf3CxA/kZMP6TSHw01GRUNQ8ngaSTHEG6/pGzcDa6oRSiO/jFD4uCoKWi6Cc14nRzbZXQAJFq7sKbEXifm/u+6qtVo+ifERNvqoSqs2oERGyLqa+m5CplvSSGzEgvudw2S6mN+MSUGWHTAfBbbSsIDy8UcrM28WGT5eHMlxBYASZD/2x+IG4A76s8mDu5FIPYeqv2DZRLzML4rqBKjz5/V8QOOPNgDfzsJ9EvzkX70uuzLtedTZi3kbGqzLGSpwIKQPQcFhbsgyTyz0rv7ZcWDZ9S24gWW0zCCl0aB6ulT/fgPVgfw4JkhfuROpvRh vault-eks
+ubuntu@ip-10-0-101-22:~/.ssh$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

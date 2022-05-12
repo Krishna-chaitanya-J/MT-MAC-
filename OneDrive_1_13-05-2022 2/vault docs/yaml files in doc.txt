@@ -1,0 +1,515 @@
+apiVersion - Which version of the Kubernetes API you're using to create this object
+kind - What kind of object you want to create
+metadata - Data that helps uniquely identify the object, including a name string, UID, and optional namespace
+spec - What state you desire for the object
+
+..........................................................................................
+TOTAL FILES IN DOC :19
+
+GETTING STARTED WITH AMAZON EKS: total ymls - 2
+................................................
+
+1.Create your Amazon EKS cluster and Amazon Linux nodes with a launch template
+cluster-node-group-lt.yaml
+
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+ name: my-cluster
+ region: us-west-2
+ version: '1.17'
+managedNodeGroups:
+- name: ng-linux
+ launchTemplate:
+ id: lt-id
+ version: "1"
+
+create using command : eksctl create cluster --config-file cluster-node-group-lt.yaml
+
+..................................................................................................
+2. create a cluster with a self-managed Windows node group and a managed Linux node group
+cluster-spec.yaml
+
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+ name: my-cluster
+ region: us-west-2
+ version: '1.17'
+managedNodeGroups:
+ - name: linux-ng
+ instanceType: t2.large
+ minSize: 2
+nodeGroups:
+ - name: windows-ng
+ instanceType: m5.large
+ minSize: 2
+ volumeSize: 100
+ amiFamily: WindowsServer2019FullContainer
+.......................................................................................................
+
+AMAZON EKS CLUSTER :total yamls - 4
+....................................
+
+1. windows support :Enabling windows support 
+eks-kube-proxywindows-crb.yaml
+
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+ name: eks:kube-proxy-windows
+ labels:
+ k8s-app: kube-proxy
+ eks.amazonaws.com/component: kube-proxy
+subjects:
+ - kind: Group
+ name: "eks:kube-proxy-windows"
+roleRef:
+ kind: ClusterRole
+ name: system:node-proxier
+ apiGroup: rbac.authorization.k8s.io
+..........................................................................................................
+
+2. Deploy a Windows sample application
+windows-server-iis.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: windows-server-iis
+spec:
+ selector:
+ matchLabels:
+ app: windows-server-iis
+ tier: backend
+ track: stable
+ replicas: 1
+ template:
+ metadata:
+ labels:
+ app: windows-server-iis
+ tier: backend
+ track: stable
+ spec:
+ containers:
+ - name: windows-server-iis
+ image: mcr.microsoft.com/windows/servercore:1809
+ ports:
+ - name: http
+ containerPort: 80
+ imagePullPolicy: IfNotPresent
+ command:
+ - powershell.exe
+ - -command
+ - "Add-WindowsFeature Web-Server; Invoke-WebRequest -UseBasicParsing
+ -Uri 'https://dotnetbinaries.blob.core.windows.net/servicemonitor/2.0.1.6/
+ServiceMonitor.exe' -OutFile 'C:\\ServiceMonitor.exe'; echo '<html><body><br/
+><br/><marquee><H1>Hello EKS!!!<H1><marquee></body><html>' > C:\\inetpub\\wwwroot\
+\default.html; C:\\ServiceMonitor.exe 'w3svc'; "
+ nodeSelector:
+ kubernetes.io/os: windows
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: windows-server-iis-service
+ namespace: default
+spec:
+ ports:
+ - port: 80
+ protocol: TCP
+ targetPort: 80
+ selector:
+ app: windows-server-iis
+ tier: backend
+track: stable
+ sessionAffinity: None
+ type: LoadBalancer
+.........................................................................................................
+
+3.Inferentia support : bert_deployment.yaml
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+ name: eks-neuron-test
+ labels:
+ app: eks-neuron-test
+ role: master
+spec:
+ replicas: 2
+ selector:
+ matchLabels:
+ app: eks-neuron-test
+ role: master
+ template:
+ metadata:
+ labels:
+app: eks-neuron-test
+ role: master
+ spec:
+ volumes:
+ - name: sock
+ emptyDir: {}
+ containers:
+ - name: eks-neuron-test
+ image: 111122223333.dkr.ecr.region-code.amazonaws.com/tensorflow-modelserver-neuron:1.15.0
+ command:
+ - /usr/local/bin/tensorflow_model_server_neuron
+ args:
+ - --port=9000
+ - --rest_api_port=8500
+ - --model_name=bert_mrpc_hc_gelus_b4_l24_0926_02
+ - --model_base_path=s3://bert/saved_model
+ ports:
+ - containerPort: 8500
+ - containerPort: 9000
+ imagePullPolicy: IfNotPresent
+ env:
+ - name: AWS_REGION
+ value: "region-code"
+ - name: S3_USE_HTTPS
+ value: "1"
+ - name: S3_VERIFY_SSL
+ value: "0"
+ - name: AWS_LOG_LEVEL
+ value: "3"
+ - name: NEURON_RTD_ADDRESS
+ value: unix:/sock/neuron.sock
+ resources:
+ limits:
+ cpu: 4
+ memory: 4Gi
+ requests:
+ cpu: "1"
+ memory: 1Gi
+ volumeMounts:
+ - name: sock
+ mountPath: /sock
+ - name: neuron-rtd
+ image: 790709498068.dkr.ecr.region-code.amazonaws.com/neuron-rtd:1.0.7865.0
+ securityContext:
+ capabilities:
+ add:
+ - SYS_ADMIN
+ - IPC_LOCK
+ volumeMounts:
+ - name: sock
+ mountPath: /sock
+ resources:
+ limits:
+ hugepages-2Mi: 256Mi
+ aws.amazon.com/neuron: 1
+ requests:
+ memory: 1024Mi
+.............................................................................................
+4. Inferentia support : bert_service.yaml
+
+kind: Service
+apiVersion: v1
+metadata:
+ name: eks-neuron-test
+ labels:
+ app: eks-neuron-test
+spec:
+ type: ClusterIP
+ ports:
+ - name: http-tf-serving
+ port: 8500
+ targetPort: 8500
+ - name: grpc-tf-serving
+ port: 9000
+ targetPort: 9000
+ selector:
+ app: eks-neuron-test
+ role: master
+..............................................................................................
+
+AMAZON EKS COMPUTE : total yaml files : 5
+..........................................
+
+Managed node group :
+
+1. Create your managed node group with a launch template
+node-group.yml
+
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+ name: my-cluster
+ region: region-code
+managedNodeGroups:
+- name: node-group-lt
+ launchTemplate:
+ id: lt-id
+ version: "1"
+................................................................................................
+
+Self managed node group :
+
+2. To enable nodes to join your cluster "AWS IAM Authenticator configuration map" to replace arn of instance role to "NodeInstanceRole"
+aws-auth-cm.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+ name: aws-auth
+ namespace: kube-system
+data:
+ mapRoles: |
+ - rolearn: <ARN of instance role (not instance profile)>
+ username: system:node:{{EC2PrivateDNSName}}
+ groups:
+ - system:bootstrappers
+ - system:nodes
+................................................................................................
+3. To launch Bottlerocket nodes
+nodegroup.yaml 
+
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+ name: my-cluster
+ region: us-west-2
+ version: '1.17'
+nodeGroups:
+ - name: ng-bottlerocket
+ instanceType: m5.large
+ desiredCapacity: 3
+ amiFamily: Bottlerocket
+ iam:
+ attachPolicyARNs:
+ - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+ - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+ - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+ - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+ ssh:
+ allow: true
+ publicKeyName: YOUR_EC2_KEYPAIR_NAME
+..................................................................................................
+4.aws-auth-cm-windows.yaml (to join windows nodes to the cluster config file )
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+ name: aws-auth
+ namespace: kube-system
+data:
+ mapRoles: |
+ - rolearn: <ARN of instance role (not instance profile) of **Linux** node>
+ username: system:node:{{EC2PrivateDNSName}}
+ groups:
+ - system:bootstrappers
+ - system:nodes
+ - rolearn: <ARN of instance role (not instance profile) of **Windows**
+ node>
+ username: system:node:{{EC2PrivateDNSName}}
+ groups:
+ - system:bootstrappers
+ - system:nodes
+ - eks:kube-proxy-windows
+......................................................................................................
+AWS fargate :
+
+5. Amazon EKS optimized accelerated Amazon Linux AMIs
+nvidia-smi.yaml (This manifest launches a Cuda container that runs nvidia-smi on a node.)
+
+apiVersion: v1
+kind: Pod
+metadata:
+ name: nvidia-smi
+spec:
+ restartPolicy: OnFailure
+ containers:
+ - name: nvidia-smi
+ image: nvidia/cuda:9.2-devel
+ args:
+ - "nvidia-smi"
+ resources:
+ limits:
+ nvidia.com/gpu: 1
+
+.....................................................................................................
+
+STORAGE : total yaml files : 2
+................................
+
+1. To create an AWS storage class for your Amazon EKS cluster
+ gp2-storage-class.yaml
+
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+ name: gp2
+ annotations:
+ storageclass.kubernetes.io/is-default-class: "true"
+provisioner: kubernetes.io/aws-ebs
+parameters:
+ type: gp2
+ fsType: ext4 
+...............................................................................................
+
+2.To deploy a sample application and verify that the CSI driver is working 
+(step-4 Edit the specs/pv.yaml file and replace the volumeHandle value with your Amazon EFS file system ID)
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+ name: efs-pv
+spec:
+ capacity:
+ storage: 5Gi
+ volumeMode: Filesystem
+ accessModes:
+ - ReadWriteMany
+ persistentVolumeReclaimPolicy: Retain
+ storageClassName: efs-sc
+ csi:
+ driver: efs.csi.aws.com
+ volumeHandle: fs-582a03f3
+
+..........................................................................................................
+
+AMAZON EKS NETWORKING :total yaml files : 2
+
+CNI custom networking
+1. ENIConfig.yaml
+
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+ name: eniconfigs.crd.k8s.amazonaws.com
+spec:
+ scope: Cluster
+ group: crd.k8s.amazonaws.com
+ version: v1alpha1
+ names:
+ plural: eniconfigs
+ singular: eniconfig
+ kind: ENIConfig
+
+2.To Create an ENIConfig custom resource for each subnet that you want to schedule pods in.
+west-us-2a.yml
+
+apiVersion: crd.k8s.amazonaws.com/v1alpha1
+kind: ENIConfig
+metadata:
+ name: us-west-2a
+spec:
+ securityGroups:
+ - sg-0dff111a1d11c1c11
+ subnet: subnet-011b111c1f11fdf11
+...................................................................................................
+APPLICATIONS :total yaml files : 1 
+
+1. To deploy a sample application 
+
+apiVersion: v1
+kind: Service
+metadata:
+ name: my-service
+ namespace: my-namespace
+ labels:
+ app: my-app
+spec:
+ selector:
+ app: my-app
+ ports:
+ - protocol: TCP
+ port: 80
+ targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: my-deployment
+ namespace: my-namespace
+ labels:
+ app: my-app
+spec:
+ replicas: 3
+ selector:
+ matchLabels:
+ app: my-app
+ template:
+ metadata:
+ labels:
+ app: my-app
+ spec:
+ affinity:
+ nodeAffinity:
+ requiredDuringSchedulingIgnoredDuringExecution:
+ nodeSelectorTerms:
+ - matchExpressions:
+ - key: beta.kubernetes.io/arch
+ operator: In
+ values:
+ - amd64
+ - arm64
+ containers:
+ - name: nginx
+ image: nginx:1.19.2
+ ports:
+ - containerPort: 80
+.......................................................................................................
+
+CLUSTER AUTHENTICATION : total yml files : 1
+.......................................................................................................
+
+1.Managing users or IAM roles for your cluster
+aws-auth-cm.yml 
+---
+apiVersion: v1
+data:
+mapUsers: |
+ - userarn: arn:aws:iam::555555555555:user/admin
+ username: admin
+ groups:
+ - system:masters
+ - userarn: arn:aws:iam::111122223333:user/ops-user
+ username: ops-user
+ groups:
+ - system:masters
+ mapRoles: |
+ - rolearn: arn:aws:iam::111122223333:role/doc-test-nodes-NodeInstanceRoleWDO5P42N3ETB
+ username: system:node:{{EC2PrivateDNSName}}
+ groups:
+ - system:bootstrappers
+ - system:nodes
+kind: ConfigMap
+metadata:
+ annotations:
+ kubectl.kubernetes.io/last-applied-configuration: |
+ {"apiVersion":"v1","data":{"mapRoles":"- rolearn: arn:aws:iam::111122223333:role/
+doc-test-nodes-NodeInstanceRole-WDO5P42N3ETB\n username: system:node:
+{{EC2PrivateDNSName}}\n groups:\n - system:bootstrappers\n -
+ system:nodes\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"awsauth","namespace":"kube-system"}}
+ creationTimestamp: 2018-04-04T18:49:10Z
+ name: aws-auth
+ namespace: kube-system
+ resourceVersion: "780"
+ selfLink: /api/v1/namespaces/kube-system/co
+..................................................................................................................
+CLUSTER MANAGEMENT : total yaml files : 0 only 1 url for dashboard creation
+...........................................................................................................
+NETWORK : total yaml files : 1
+.................................
+1. IAM roles for service accounts technical overview - pod configapiVersion: v1
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+ annotations:
+ eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_B_AWS_ACCOUNT_ID:role/IAM_ROLE_NAME
+.........................................................................................................
+SECURITY : total yaml files : 1
+.........................................................................................................
+1. POD security policy :
+"privileged-podsecuritypolicy.yaml"
+
+
+
+
